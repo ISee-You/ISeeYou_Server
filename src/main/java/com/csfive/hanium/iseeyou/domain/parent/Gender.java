@@ -9,6 +9,7 @@ import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
 public enum Gender {
+
     MALE("남자"),
     FEMALE("여자");
 
@@ -18,7 +19,7 @@ public enum Gender {
         return Arrays.asList(values()).stream()
                 .filter(token -> token.findBy(gender))
                 .findFirst()
-                .orElseThrow(() -> new NoSuchElementException(""));
+                .orElseThrow(() -> new NoSuchElementException("해당 성별이 없습니다."));
     }
 
     private boolean findBy(String token){
@@ -28,5 +29,4 @@ public enum Gender {
     public String getGender(){
         return gender;
     }
-
 }

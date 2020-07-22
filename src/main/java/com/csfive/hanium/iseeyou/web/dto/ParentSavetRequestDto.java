@@ -2,11 +2,12 @@ package com.csfive.hanium.iseeyou.web.dto;
 
 import com.csfive.hanium.iseeyou.domain.parent.Gender;
 import com.csfive.hanium.iseeyou.domain.parent.Parent;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class ParentSavetRequestDto {
 
@@ -31,5 +32,4 @@ public class ParentSavetRequestDto {
                 .gender(gender)
                 .build();
     }
-
 }

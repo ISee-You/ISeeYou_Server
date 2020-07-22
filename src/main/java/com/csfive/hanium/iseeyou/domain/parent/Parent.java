@@ -1,6 +1,6 @@
 package com.csfive.hanium.iseeyou.domain.parent;
 
-import com.csfive.hanium.iseeyou.domain.student.Student;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,13 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Parent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    //@Column(name = "PARENT_ID")
+    @Column(name = "PARENT_ID")
     private Long id;
 
     @Column(nullable = false)
@@ -31,8 +31,8 @@ public class Parent {
     @Column(nullable = false)
     private Gender gender;
 
-    //@OneToMany(mappedBy = "parent")
-    //private List<Student> students = new ArrayList<Student>();
+    @OneToMany(mappedBy = "parent")
+    private List<Student> students = new ArrayList<Student>();
 
     @Builder
     public Parent(String name, String password, String email, Gender gender){
@@ -41,5 +41,4 @@ public class Parent {
         this.email = email;
         this.gender = gender;
     }
-
 }

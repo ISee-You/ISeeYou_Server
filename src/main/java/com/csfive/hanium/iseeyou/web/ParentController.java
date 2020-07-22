@@ -18,5 +18,4 @@ public class ParentController {
         System.out.println(">>>>>>>>>>>>>>>"+requestDto.getName());
         return parentService.save(requestDto);
     }
-
 }
