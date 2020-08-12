@@ -1,19 +1,17 @@
 package com.csfive.hanium.iseeyou.domain.student;
 
+import com.csfive.hanium.iseeyou.domain.parent.Parent;
 import com.csfive.hanium.iseeyou.enums.GenderType;
 import com.csfive.hanium.iseeyou.enums.HandType;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "STUDENTS")
+@Table
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Student {
 
     @Id
@@ -21,37 +19,33 @@ public class Student {
     @Column(name = "STUDENT_ID")
     private Long id;
 
-    @Column(name = "NAME")
+    @Column(nullable = false)
     private String name;
 
-    @Column(name = "EMAIL")
+    @Column(nullable = false)
     private String email;
 
-    @Column(name = "PASSWORD")
+    @Column(nullable = false)
     private String password;
 
     @Enumerated(value = EnumType.STRING)
-    @Column(name = "HAND")
+    @Column(nullable = false)
     private HandType handType;
 
     @Enumerated(value = EnumType.STRING)
-    @Column(name = "GENDER")
-    private GenderType genderType;
+    @Column(nullable = false)
+    private GenderType gender;
 
-    @Column(name = "PARENT_ID")
-    private Long parentId;
-
-    @Column(name = "RECORDER_ID")
-    private Long recorderId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PARENT_ID")
+    private Parent parent;
 
     @Builder
-    public Student(String name, String email, String password, HandType handType, GenderType genderType, Long parentId, Long recorderId) {
+    public Student(String name, String email, String password, HandType handType, GenderType gender) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.handType = handType;
-        this.genderType = genderType;
-        this.parentId = parentId;
-        this.recorderId = recorderId;
+        this.gender = gender;
     }
 }
