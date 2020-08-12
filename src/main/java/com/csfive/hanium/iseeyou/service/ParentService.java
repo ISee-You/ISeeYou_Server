@@ -8,6 +8,7 @@ import com.csfive.hanium.iseeyou.dto.parent.LoginRequestDto;
 import com.csfive.hanium.iseeyou.dto.parent.ParentAddChildRequestDto;
 import com.csfive.hanium.iseeyou.dto.parent.ParentSavetRequestDto;
 import com.csfive.hanium.iseeyou.dto.parent.ParentUpdateRequestDto;
+import com.csfive.hanium.iseeyou.dto.student.StudentRegistrationReqDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -82,5 +83,18 @@ public class ParentService {
         Parent parent = parentRepository.findByEmailAndPassword(parentEmail,parentPW)
                 .orElseThrow(()->new IllegalArgumentException(String.format("존재하지 않는 ID,혹은 PW")));
         return parent.getId();
+    }
+
+    @Transactional
+    public void registrationStudent(Long parentId,StudentRegistrationReqDto studentRegistrationReqDto){
+        String studentName = studentRegistrationReqDto.getName();
+        String studentEmail = studentRegistrationReqDto.getEmail();
+
+        Student student = studentRepository.findByNameAndEmail(studentName,studentEmail)
+                .orElseThrow(()->new IllegalArgumentException(String.format("존재하지않는 Name : %d, 혹은 Email : %d",studentName,studentEmail)));
+        Parent parent = parentRepository.findById(parentId)
+                .orElseThrow(()->new IllegalArgumentException(String.format("존재하지 않는 사용자입니다 ID : %d",parentId)));
+
+        parent.addChild(student);
     }
 }

@@ -3,6 +3,7 @@ package com.csfive.hanium.iseeyou.controller;
 import com.csfive.hanium.iseeyou.dto.parent.LoginRequestDto;
 import com.csfive.hanium.iseeyou.dto.parent.ParentAddChildRequestDto;
 import com.csfive.hanium.iseeyou.dto.parent.ParentUpdateRequestDto;
+import com.csfive.hanium.iseeyou.dto.student.StudentRegistrationReqDto;
 import com.csfive.hanium.iseeyou.service.ParentService;
 import com.csfive.hanium.iseeyou.dto.parent.ParentSavetRequestDto;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.xml.ws.Response;
 
 import static com.csfive.hanium.iseeyou.utils.ResponseMessage.LOGIN_SUCCESS;
+import static com.csfive.hanium.iseeyou.utils.ResponseMessage.SAVE_SUCCESS;
 
 @RequiredArgsConstructor
 @RestController
@@ -30,6 +32,12 @@ public class ParentController {
     public ResponseEntity siginup(@RequestBody ParentSavetRequestDto saveRequestDto){
         System.out.println(saveRequestDto.getName());
         return parentService.save(saveRequestDto);
+    }
+
+    @PostMapping("/api/v1/parents/{parentId}/acceptance") //학생의 요청 수락
+    public ResponseEntity acceptanceRequest(@PathVariable("parentId") Long parentId,@RequestBody StudentRegistrationReqDto studentRegistrationReqDto){
+        parentService.registrationStudent(parentId,studentRegistrationReqDto);
+        return ResponseEntity.ok(SAVE_SUCCESS);
     }
 
     @PostMapping("/api/v1/{parentId}")
@@ -61,5 +69,6 @@ public class ParentController {
 
         return ResponseEntity.ok(LOGIN_SUCCESS);
     }
+
 
 }
