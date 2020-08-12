@@ -1,57 +1,54 @@
 package com.csfive.hanium.iseeyou.domain.student;
 
+import com.csfive.hanium.iseeyou.domain.parent.Parent;
 import com.csfive.hanium.iseeyou.enums.GenderType;
 import com.csfive.hanium.iseeyou.enums.HandType;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "STUDENTS")
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Student {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "STUDENT_ID")
+    @Column(name = "student_id")
     private Long id;
 
-    @Column(name = "NAME")
+    @Column(name = "name")
     private String name;
 
-    @Column(name = "EMAIL")
+    @Column(name = "email")
     private String email;
 
-    @Column(name = "PASSWORD")
+    @Column(name = "password")
     private String password;
 
     @Enumerated(value = EnumType.STRING)
-    @Column(name = "HAND")
+    @Column(name = "hand")
     private HandType handType;
 
     @Enumerated(value = EnumType.STRING)
-    @Column(name = "GENDER")
+    @Column(name = "gender")
     private GenderType genderType;
 
-    @Column(name = "PARENT_ID")
-    private Long parentId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id")
+    private Parent parent;
 
-    @Column(name = "RECORDER_ID")
-    private Long recorderId;
+    @Column(name = "recorderIdx")
+    private Long recorderIdx;
 
     @Builder
-    public Student(String name, String email, String password, HandType handType, GenderType genderType, Long parentId, Long recorderId) {
+    public Student(String name, String email, String password, HandType handType, GenderType genderType,  Long recorderIdx) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.handType = handType;
         this.genderType = genderType;
-        this.parentId = parentId;
-        this.recorderId = recorderId;
+        this.recorderIdx = recorderIdx;
     }
 }

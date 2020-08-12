@@ -1,7 +1,7 @@
-package com.csfive.hanium.iseeyou.web.dto;
+package com.csfive.hanium.iseeyou.dto.parent;
 
-import com.csfive.hanium.iseeyou.domain.parent.Gender;
 import com.csfive.hanium.iseeyou.domain.parent.Parent;
+import com.csfive.hanium.iseeyou.enums.GenderType;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,10 +14,10 @@ public class ParentSavetRequestDto {
     private String name;
     private String email;
     private String password;
-    private Gender gender;
+    private GenderType gender;
 
     @Builder
-    public ParentSavetRequestDto(String name, String email, String password, Gender gender){
+    public ParentSavetRequestDto(String name, String email, String password, GenderType gender){
         this.name = name;
         this.email = email;
         this.password = password;

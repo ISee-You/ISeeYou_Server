@@ -16,8 +16,8 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .useDefaultResponseMessages(false)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.csfive.hanium.iseeyou"))
-                .paths(PathSelectors.ant("/api/**"))
+                .apis(RequestHandlerSelectors.basePackage("com.csfive.hanium.iseeyou"))//현재 RequestMapping으로 할당된 URL리스트중 com.csfive.hanium,iseeyou패키지에 들어있는 URL만 추출
+                .paths(PathSelectors.ant("/api/**"))//그중 "/api/**"인 URL들만 필터링
                 .build();
     }
 }
