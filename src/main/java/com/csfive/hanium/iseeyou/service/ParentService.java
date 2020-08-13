@@ -8,19 +8,16 @@ import com.csfive.hanium.iseeyou.dto.parent.LoginRequestDto;
 import com.csfive.hanium.iseeyou.dto.parent.ParentAddChildRequestDto;
 import com.csfive.hanium.iseeyou.dto.parent.ParentSavetRequestDto;
 import com.csfive.hanium.iseeyou.dto.parent.ParentUpdateRequestDto;
-import com.csfive.hanium.iseeyou.dto.student.StudentRegistrationReqDto;
+import com.csfive.hanium.iseeyou.dto.student.StudentAcceptanceReqDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.transaction.Transaction;
-import java.util.NoSuchElementException;
-
 import static com.csfive.hanium.iseeyou.utils.ResponseMessage.*;
 
+@Transactional
 @RequiredArgsConstructor
 @Service
 public class ParentService {
@@ -28,14 +25,12 @@ public class ParentService {
     private final ParentRepository parentRepository;
     private final StudentRepository studentRepository;
 
-    @Transactional
     public ResponseEntity<String> save(ParentSavetRequestDto requestDto){
         parentRepository.save(requestDto.toEntity());
 
         return new ResponseEntity<>(CREATE_USER, HttpStatus.CREATED);
     }
 
-    @Transactional
     public ResponseEntity<String> addChild(Long parentId, ParentAddChildRequestDto parentAddChildRequestDto){
         String ChildName = parentAddChildRequestDto.getStudentName();
         String ChildEmail = parentAddChildRequestDto.getStudentEmail();
@@ -50,7 +45,6 @@ public class ParentService {
         return new ResponseEntity<>(SAVE_SUCCESS,HttpStatus.OK);
     }
 
-    @Transactional
     public ResponseEntity<String> update(Long parentId, ParentUpdateRequestDto updateRequestDto){
         Parent parent = parentRepository.findById(parentId)
                 .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 Id입니다. "+parentId));
@@ -59,7 +53,6 @@ public class ParentService {
         return new ResponseEntity<>(UPDATE_USER,HttpStatus.OK);
     }
 
-    @Transactional
     public ResponseEntity<String> delete(Long parentId){
         Parent parent = parentRepository.findById(parentId).orElseThrow(()->new IllegalArgumentException("존재하지 않는 Id입니다."+parentId));
         //parent.deleteChild();
@@ -76,7 +69,6 @@ public class ParentService {
         return ResponseEntity.ok("찾음");
     }
 
-    @Transactional
     public Long login(LoginRequestDto loginRequestDto){
         String parentEmail = loginRequestDto.getEmail();
         String parentPW = loginRequestDto.getPassword();
@@ -85,10 +77,9 @@ public class ParentService {
         return parent.getId();
     }
 
-    @Transactional
-    public void registrationStudent(Long parentId,StudentRegistrationReqDto studentRegistrationReqDto){
-        String studentName = studentRegistrationReqDto.getName();
-        String studentEmail = studentRegistrationReqDto.getEmail();
+    public void accpetanceStudent(Long parentId, StudentAcceptanceReqDto studentAcceptanceReqDto){
+        String studentName = studentAcceptanceReqDto.getName();
+        String studentEmail = studentAcceptanceReqDto.getEmail();
 
         Student student = studentRepository.findByNameAndEmail(studentName,studentEmail)
                 .orElseThrow(()->new IllegalArgumentException(String.format("존재하지않는 Name : %d, 혹은 Email : %d",studentName,studentEmail)));
