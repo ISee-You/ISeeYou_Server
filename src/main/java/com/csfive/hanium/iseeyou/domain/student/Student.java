@@ -8,6 +8,7 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
+@Table
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -15,40 +16,36 @@ public class Student {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "student_id")
+    @Column(name = "STUDENT_ID")
     private Long id;
 
-    @Column(name = "name")
+    @Column(nullable = false)
     private String name;
 
-    @Column(name = "email")
+    @Column(nullable = false)
     private String email;
 
-    @Column(name = "password")
+    @Column(nullable = false)
     private String password;
 
     @Enumerated(value = EnumType.STRING)
-    @Column(name = "hand")
+    @Column(nullable = false)
     private HandType handType;
 
     @Enumerated(value = EnumType.STRING)
-    @Column(name = "gender")
-    private GenderType genderType;
+    @Column(nullable = false)
+    private GenderType gender;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Parent parent;
 
-    @Column(name = "recorderIdx")
-    private Long recorderIdx;
-
     @Builder
-    public Student(String name, String email, String password, HandType handType, GenderType genderType,  Long recorderIdx) {
+    public Student(String name, String email, String password, HandType handType, GenderType gender) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.handType = handType;
-        this.genderType = genderType;
-        this.recorderIdx = recorderIdx;
+        this.gender = gender;
     }
 }

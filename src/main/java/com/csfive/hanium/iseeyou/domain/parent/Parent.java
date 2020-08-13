@@ -18,7 +18,7 @@ public class Parent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "parent_id")
+    @Column(name = "PARENT_ID")
     private Long id;
 
     @Column(nullable = false)
@@ -34,7 +34,7 @@ public class Parent {
     @Column(nullable = false)
     private GenderType gender;
 
-    @OneToMany(mappedBy = "parent")
+    @OneToMany(mappedBy = "parent_id")
     private List<Student> students = new ArrayList<Student>();
 
     @Builder

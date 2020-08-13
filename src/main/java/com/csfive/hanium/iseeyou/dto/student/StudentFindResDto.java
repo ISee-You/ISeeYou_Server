@@ -21,6 +21,6 @@ public class StudentFindResDto {
         this.email = student.getEmail();
         this.password = student.getPassword();
         this.handType = student.getHandType();
-        this.genderType = student.getGenderType();
+        this.genderType = student.getGender();
     }
 }
