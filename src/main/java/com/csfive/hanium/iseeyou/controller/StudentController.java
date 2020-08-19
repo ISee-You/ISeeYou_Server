@@ -1,10 +1,7 @@
 package com.csfive.hanium.iseeyou.controller;
 
 import com.csfive.hanium.iseeyou.domain.student.Student;
-import com.csfive.hanium.iseeyou.dto.student.StudentFindResDto;
-import com.csfive.hanium.iseeyou.dto.student.StudentLoginReqDto;
-import com.csfive.hanium.iseeyou.dto.student.StudentSaveReqDto;
-import com.csfive.hanium.iseeyou.dto.student.StudentUpdateReqDto;
+import com.csfive.hanium.iseeyou.dto.student.*;
 import com.csfive.hanium.iseeyou.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -54,5 +51,12 @@ public class StudentController {
             return ResponseEntity.badRequest().body(LOGIN_FAIL);
         }
         return ResponseEntity.ok(LOGIN_SUCCESS);
+    }
+
+    @PostMapping("{userId}/request/registration")
+    public ResponseEntity<StudentRegisterResDto> requestRegister(@PathVariable("userId") Long id) {
+        StudentRegisterResDto registerResDto = studentService.requestRegister(id);
+
+        return ResponseEntity.ok(registerResDto);
     }
 }
