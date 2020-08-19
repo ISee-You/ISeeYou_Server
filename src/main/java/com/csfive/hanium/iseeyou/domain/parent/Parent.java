@@ -44,4 +44,21 @@ public class Parent {
         this.email = email;
         this.gender = gender;
     }
+
+    public void addStudent(Student student){
+        this.students.add(student);
+        student.setParent(this);
+    }
+
+    public void deleteStudent(Student student){
+        this.students.remove(student);
+        student.setParent(null);
+    }
+
+    public void update(String name, String password, String email, GenderType gender){
+        this.name = name;
+        this.password = password;
+        this.email = email;
+        this.gender = gender;
+    }
 }

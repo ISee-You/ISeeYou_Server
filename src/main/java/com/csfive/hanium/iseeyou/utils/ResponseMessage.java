@@ -1,5 +1,7 @@
 package com.csfive.hanium.iseeyou.utils;
 
+import lombok.Builder;
+
 public class ResponseMessage {
     public static String READ_USER = "회원 정보 조회 성공";
     public static String NOT_FOUND_USER = "회원을 찾을 수 없습니다.";
@@ -23,4 +25,5 @@ public class ResponseMessage {
     public static String CONTENT_FILE = "파일이 있습니다.";
 
     public static String SAVE_SUCCESS ="저장 성공";
+
 }

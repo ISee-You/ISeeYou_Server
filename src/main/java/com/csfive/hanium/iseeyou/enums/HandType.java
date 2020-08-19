@@ -4,9 +4,9 @@ public enum HandType {
     LEFT("왼손"),
     RIGHT("오른손");
 
-    private final String hand;
+    private String hand;
 
-    HandType(final String hand) {
+    HandType( String hand) {
         this.hand = hand;
     }
 }
