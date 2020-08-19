@@ -2,10 +2,7 @@ package com.csfive.hanium.iseeyou.service;
 
 import com.csfive.hanium.iseeyou.domain.student.Student;
 import com.csfive.hanium.iseeyou.domain.student.StudentRepository;
-import com.csfive.hanium.iseeyou.dto.student.StudentFindResDto;
-import com.csfive.hanium.iseeyou.dto.student.StudentLoginReqDto;
-import com.csfive.hanium.iseeyou.dto.student.StudentSaveReqDto;
-import com.csfive.hanium.iseeyou.dto.student.StudentUpdateReqDto;
+import com.csfive.hanium.iseeyou.dto.student.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,5 +57,12 @@ public class StudentService {
 
     public Student login(final StudentLoginReqDto loginReqDto) {
         return studentRepository.findByEmailAndPassword(loginReqDto.getEmail(), loginReqDto.getPassword());
+    }
+
+    public StudentRegisterResDto requestRegister(Long id) {
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException(String.format("id: %d, 존재하지 않는 아이디 입니다.", id)));
+
+        return new StudentRegisterResDto(student);
     }
 }

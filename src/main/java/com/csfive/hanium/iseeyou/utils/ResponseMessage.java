@@ -23,4 +23,6 @@ public class ResponseMessage {
     public static String CONTENT_FILE = "파일이 있습니다.";
 
     public static String SAVE_SUCCESS ="저장 성공";
+
+    public static String REQUEST_REGISTER = "등록 요청";
 }
