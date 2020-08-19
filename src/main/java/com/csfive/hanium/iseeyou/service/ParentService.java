@@ -9,11 +9,15 @@ import com.csfive.hanium.iseeyou.dto.parent.ParentAddChildRequestDto;
 import com.csfive.hanium.iseeyou.dto.parent.ParentSavetRequestDto;
 import com.csfive.hanium.iseeyou.dto.parent.ParentUpdateRequestDto;
 import com.csfive.hanium.iseeyou.dto.student.StudentAcceptanceReqDto;
+import com.csfive.hanium.iseeyou.dto.student.StudentDetailResDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.csfive.hanium.iseeyou.utils.ResponseMessage.*;
 
@@ -25,48 +29,48 @@ public class ParentService {
     private final ParentRepository parentRepository;
     private final StudentRepository studentRepository;
 
-    public ResponseEntity<String> save(ParentSavetRequestDto requestDto){
+    public void signup(ParentSavetRequestDto requestDto){
         parentRepository.save(requestDto.toEntity());
-
-        return new ResponseEntity<>(CREATE_USER, HttpStatus.CREATED);
     }
 
-    public ResponseEntity<String> addChild(Long parentId, ParentAddChildRequestDto parentAddChildRequestDto){
-        String ChildName = parentAddChildRequestDto.getStudentName();
-        String ChildEmail = parentAddChildRequestDto.getStudentEmail();
-        Student student =  studentRepository.findByNameAndEmail(ChildName,ChildEmail)
-                .orElseThrow(()->new IllegalArgumentException(ChildName+" 이나 "+ChildEmail+"이 존재하지 않습니다."));
+//    public ResponseEntity<String> addChild(Long parentId, ParentAddChildRequestDto parentAddChildRequestDto){
+//        String ChildName = parentAddChildRequestDto.getStudentName();
+//        String ChildEmail = parentAddChildRequestDto.getStudentEmail();
+//        Student student =  studentRepository.findByNameAndEmail(ChildName,ChildEmail)
+//                .orElseThrow(()->new IllegalArgumentException(ChildName+" 이나 "+ChildEmail+"이 존재하지 않습니다."));
+//
+//        Parent parent = parentRepository.findById(parentId)
+//                .orElseThrow(()->new IllegalArgumentException(parentId+"는 존재하지 않는 부모ID입니다"));
+//
+//        parent.addStudent(student);
+//
+//        return new ResponseEntity<>(SAVE_SUCCESS,HttpStatus.OK);
+//    }
 
-        Parent parent = parentRepository.findById(parentId)
-                .orElseThrow(()->new IllegalArgumentException(parentId+"는 존재하지 않는 부모ID입니다"));
-
-        parent.addChild(student);
-
-        return new ResponseEntity<>(SAVE_SUCCESS,HttpStatus.OK);
-    }
-
-    public ResponseEntity<String> update(Long parentId, ParentUpdateRequestDto updateRequestDto){
+    public Long update(Long parentId, ParentUpdateRequestDto updateRequestDto){
         Parent parent = parentRepository.findById(parentId)
                 .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 Id입니다. "+parentId));
         parent.update(updateRequestDto.getName(),updateRequestDto.getPassword(), updateRequestDto.getEmail(),updateRequestDto.getGender());
 
-        return new ResponseEntity<>(UPDATE_USER,HttpStatus.OK);
+        return parent.getId();
     }
 
-    public ResponseEntity<String> delete(Long parentId){
+    public void delete(Long parentId){
         Parent parent = parentRepository.findById(parentId).orElseThrow(()->new IllegalArgumentException("존재하지 않는 Id입니다."+parentId));
         //parent.deleteChild();
         parentRepository.delete(parent);
-
-        return new ResponseEntity<>(DELETE_USER,HttpStatus.OK);
     }
 
-    public ResponseEntity<String> findChilds(Long id){
+    public List<StudentDetailResDto> findStudents(Long id){
         Parent parent = parentRepository.findById(id)
                 .orElseThrow(()-> new IllegalArgumentException(String.format("%d, 존재하지 않는 Id입니다. ", id)));
 
-        System.out.println(parent.getStudents().get(0).getName());
-        return ResponseEntity.ok("찾음");
+        List<StudentDetailResDto> studentDetailsResDtos = new ArrayList<>();
+        for(Student student : parent.getStudents()){
+            studentDetailsResDtos.add(new StudentDetailResDto(student));
+        }
+
+        return studentDetailsResDtos;
     }
 
     public Long login(LoginRequestDto loginRequestDto){
@@ -86,6 +90,6 @@ public class ParentService {
         Parent parent = parentRepository.findById(parentId)
                 .orElseThrow(()->new IllegalArgumentException(String.format("존재하지 않는 사용자입니다 ID : %d",parentId)));
 
-        parent.addChild(student);
+        parent.addStudent(student);
     }
 }

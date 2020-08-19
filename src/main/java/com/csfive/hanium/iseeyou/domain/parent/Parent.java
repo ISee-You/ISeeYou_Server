@@ -34,7 +34,7 @@ public class Parent {
     @Column(nullable = false)
     private GenderType gender;
 
-    @OneToMany(mappedBy = "parent_id")
+    @OneToMany(mappedBy = "parent")
     private List<Student> students = new ArrayList<Student>();
 
     @Builder
@@ -45,12 +45,12 @@ public class Parent {
         this.gender = gender;
     }
 
-    public void addChild(Student student){
+    public void addStudent(Student student){
         this.students.add(student);
         student.setParent(this);
     }
 
-    public void deleteChild(Student student){
+    public void deleteStudent(Student student){
         this.students.remove(student);
         student.setParent(null);
     }

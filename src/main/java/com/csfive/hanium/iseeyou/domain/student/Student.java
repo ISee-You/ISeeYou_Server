@@ -37,7 +37,7 @@ public class Student {
     private GenderType gender;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id")
+    @JoinColumn(name = "PARENT_ID")
     private Parent parent;
 
     @Builder
