@@ -26,4 +26,8 @@ public class ResponseMessage {
 
     public static String SAVE_SUCCESS ="저장 성공";
 
+    public static String REGISTER_SUCCESS = "등록 성공";
+    public static String REGISTER_FAIL = "등록 실패";
+
+    public static String DELETE_FAIL = "삭제 실패";
 }
