@@ -20,6 +20,4 @@ public class SwaggerConfig {
                 .paths(PathSelectors.ant("/api/**"))//그중 "/api/**"인 URL들만 필터링
                 .build();
     }
-
-
 }
