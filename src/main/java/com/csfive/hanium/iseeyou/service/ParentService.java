@@ -47,7 +47,7 @@ public class ParentService {
         Parent parent = parentRepository.findById(parentId)
                 .orElseThrow(()-> new IllegalArgumentException(String.format("존재하지 않는 Id입니다. ", parentId)));
         Student student = studentRepository.findByEmail(parentDeleteStudentReqDto.getEmail())
-                .orElseThrow(()->new IllegalAccessException(String.format("존재하지않는 학생 email입니다")));
+                .orElseThrow(()-> new IllegalArgumentException(String.format("존재하지 않는 Email입니다.",parentDeleteStudentReqDto.getEmail())));
         parent.deleteStudent(student);
     }
 
