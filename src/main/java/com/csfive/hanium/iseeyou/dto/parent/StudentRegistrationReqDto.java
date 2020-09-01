@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Getter
-public class ParentAddStudentReqDto {
+public class StudentRegistrationReqDto {
     private String name;
     private String email;
 }

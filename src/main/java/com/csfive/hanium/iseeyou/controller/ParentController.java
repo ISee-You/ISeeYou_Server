@@ -1,12 +1,9 @@
 package com.csfive.hanium.iseeyou.controller;
 
-import com.csfive.hanium.iseeyou.domain.student.Student;
 import com.csfive.hanium.iseeyou.dto.parent.*;
-import com.csfive.hanium.iseeyou.dto.student.StudentAcceptanceReqDto;
 import com.csfive.hanium.iseeyou.dto.student.StudentDetailResDto;
 import com.csfive.hanium.iseeyou.service.ParentService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,26 +24,26 @@ public class ParentController {
         return ResponseEntity.ok(CREATE_USER);
     }
 
-    @PostMapping("/login")
+    @PostMapping("/Login")
     public ResponseEntity login(@RequestBody LoginRequestDto loginRequestDto){
         Long id = parentService.login(loginRequestDto);
 
         return ResponseEntity.ok(LOGIN_SUCCESS);
     }
 
-    @PostMapping("/{parentId}/addStudent")
-    public ResponseEntity<String> addStudent(@PathVariable("parentId") Long parentId,@RequestBody ParentAddStudentReqDto parentAddStudentReqDto){
-        parentService.addStudent(parentId, parentAddStudentReqDto);
+    @PostMapping("/{parentId}/Registration")
+    public ResponseEntity<String> studentRegistration(@PathVariable("parentId") Long parentId,@RequestBody StudentRegistrationReqDto studentRegistrationReqDto){
+        parentService.studentRegistration(parentId, studentRegistrationReqDto);
         return ResponseEntity.ok(SAVE_SUCCESS);
     }
 
-    @DeleteMapping("/{parentId}/deletStudent")
+    @DeleteMapping("/{parentId}/DeletStudent")
     public ResponseEntity<String> deleteStudent(@PathVariable("parentId") Long parentId, @RequestBody ParentDeleteStudentReqDto parentDeleteStudentReqDto){
         parentService.deleteStudent(parentId, parentDeleteStudentReqDto);
         return ResponseEntity.ok(DELETE_USER);
     }
 
-    @GetMapping("/{parentId}/students")
+    @GetMapping("/{parentId}/Students")
     public ResponseEntity<List<StudentDetailResDto>> findStudent(@PathVariable("parentId")Long id){
         List<StudentDetailResDto> studentList = parentService.findStudents(id);
 

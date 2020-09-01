@@ -6,18 +6,13 @@ import com.csfive.hanium.iseeyou.domain.student.Student;
 import com.csfive.hanium.iseeyou.domain.student.StudentRepository;
 import com.csfive.hanium.iseeyou.dto.parent.*;
 //import com.csfive.hanium.iseeyou.dto.parent.ParentAddChildRequestDto;
-import com.csfive.hanium.iseeyou.dto.student.StudentAcceptanceReqDto;
 import com.csfive.hanium.iseeyou.dto.student.StudentDetailResDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.csfive.hanium.iseeyou.utils.ResponseMessage.*;
 
 @Transactional
 @RequiredArgsConstructor
@@ -31,9 +26,9 @@ public class ParentService {
         parentRepository.save(requestDto.toEntity());
     }
 
-    public void addStudent(Long parentId, ParentAddStudentReqDto parentAddStudentReqDto){
-        String studentName = parentAddStudentReqDto.getName();
-        String studentEmail = parentAddStudentReqDto.getEmail();
+    public void studentRegistration(Long parentId, StudentRegistrationReqDto studentRegistrationReqDto){
+        String studentName = studentRegistrationReqDto.getName();
+        String studentEmail = studentRegistrationReqDto.getEmail();
 
         Student student = studentRepository.findByNameAndEmail(studentName,studentEmail)
             .orElseThrow(()->new IllegalArgumentException(String.format("존재하지않는 Name : %d, 혹은 Email : %d",studentName,studentEmail)));
