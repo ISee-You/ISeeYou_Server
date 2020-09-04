@@ -7,6 +7,7 @@ import com.csfive.hanium.iseeyou.domain.student.StudentRepository;
 import com.csfive.hanium.iseeyou.dto.parent.*;
 //import com.csfive.hanium.iseeyou.dto.parent.ParentAddChildRequestDto;
 import com.csfive.hanium.iseeyou.dto.student.StudentDetailResDto;
+//import com.csfive.hanium.iseeyou.utils.exception.AlreadyExist;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,8 +35,12 @@ public class ParentService {
             .orElseThrow(()->new IllegalArgumentException(String.format("존재하지않는 Name : %d, 혹은 Email : %d",studentName,studentEmail)));
         Parent parent = parentRepository.findById(parentId)
             .orElseThrow(()->new IllegalArgumentException(String.format("존재하지 않는 사용자입니다 ID : %d",parentId)));
-
         parent.addStudent(student);
+//        if(checkStudent(studentRegistrationReqDto, parent)){
+//            parent.addStudent(student);
+//        }else{
+//            throw new AlreadyExist(String.format("이미 존재하는 학생입니다. (%d)",student.getName()));
+//        }
     }
 
     public void deleteStudent(Long parentId, ParentDeleteStudentReqDto parentDeleteStudentReqDto){
@@ -77,5 +82,20 @@ public class ParentService {
         Parent parent = parentRepository.findByEmailAndPassword(parentEmail,parentPW)
                 .orElseThrow(()->new IllegalArgumentException(String.format("존재하지 않는 ID,혹은 PW")));
         return parent.getId();
+    }
+
+    public Boolean checkStudent(StudentRegistrationReqDto studentRegisterResDto, Parent parent){
+        for(Student student : parent.getStudents()){
+            System.out.println(">>>> "+student.getEmail());
+            System.out.println(">>>> "+studentRegisterResDto.getEmail());
+            System.out.println("---"+student.getEmail().equals(studentRegisterResDto.getEmail()));
+
+            if(student.getEmail().equals(studentRegisterResDto.getEmail())){
+                System.out.println(">>>>>>>>>>>");
+                return false;
+            }
+        }
+        System.out.println("--------------------");
+        return true;
     }
 }
