@@ -7,7 +7,7 @@ import com.csfive.hanium.iseeyou.domain.student.StudentRepository;
 import com.csfive.hanium.iseeyou.dto.parent.*;
 //import com.csfive.hanium.iseeyou.dto.parent.ParentAddChildRequestDto;
 import com.csfive.hanium.iseeyou.dto.student.StudentDetailResDto;
-//import com.csfive.hanium.iseeyou.utils.exception.AlreadyExist;
+import com.csfive.hanium.iseeyou.utils.ErrorException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,82 +20,78 @@ import java.util.List;
 @Service
 public class ParentService {
 
+
     private final ParentRepository parentRepository;
     private final StudentRepository studentRepository;
+
 
     public void signup(ParentSavetRequestDto requestDto){
         parentRepository.save(requestDto.toEntity());
     }
 
-    public void studentRegistration(Long parentId, StudentRegistrationReqDto studentRegistrationReqDto){
+    public void studentRegistration(Long parentId, StudentRegistrationReqDto studentRegistrationReqDto) throws IllegalArgumentException,ErrorException {
         String studentName = studentRegistrationReqDto.getName();
         String studentEmail = studentRegistrationReqDto.getEmail();
 
         Student student = studentRepository.findByNameAndEmail(studentName,studentEmail)
-            .orElseThrow(()->new IllegalArgumentException(String.format("존재하지않는 Name : %d, 혹은 Email : %d",studentName,studentEmail)));
+            .orElseThrow(()->new IllegalArgumentException(String.format("존재하지않는 Name : %s, 혹은 Email : %s",studentName,studentEmail)));
         Parent parent = parentRepository.findById(parentId)
             .orElseThrow(()->new IllegalArgumentException(String.format("존재하지 않는 사용자입니다 ID : %d",parentId)));
-        parent.addStudent(student);
-//        if(checkStudent(studentRegistrationReqDto, parent)){
-//            parent.addStudent(student);
-//        }else{
-//            throw new AlreadyExist(String.format("이미 존재하는 학생입니다. (%d)",student.getName()));
-//        }
+
+        if(checkStudent(studentRegistrationReqDto, parent)){
+            parent.addStudent(student);
+        }else{
+            throw new ErrorException(String.format("이미 존재하는 학생입니다. (%s)",student.getName()));
+        }
     }
 
-    public void deleteStudent(Long parentId, ParentDeleteStudentReqDto parentDeleteStudentReqDto){
+    public void deleteStudent(Long parentId, ParentDeleteStudentReqDto parentDeleteStudentReqDto)throws IllegalArgumentException{
         Parent parent = parentRepository.findById(parentId)
-                .orElseThrow(()-> new IllegalArgumentException(String.format("존재하지 않는 Id입니다. ", parentId)));
+                .orElseThrow(()-> new IllegalArgumentException(String.format("존재하지 않는 회원번호 : %d 입니다. ", parentId)));
         Student student = studentRepository.findByEmail(parentDeleteStudentReqDto.getEmail())
-                .orElseThrow(()-> new IllegalArgumentException(String.format("존재하지 않는 Email입니다.",parentDeleteStudentReqDto.getEmail())));
+                .orElseThrow(()-> new IllegalArgumentException(String.format("존재하지 않는 Email : %s 입니다.",parentDeleteStudentReqDto.getEmail())));
         parent.deleteStudent(student);
     }
 
-    public Long update(Long parentId, ParentUpdateRequestDto updateRequestDto){
+    public Long update(Long parentId, ParentUpdateRequestDto updateRequestDto)throws IllegalArgumentException{
         Parent parent = parentRepository.findById(parentId)
-                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 Id입니다. "+parentId));
+                .orElseThrow(()-> new IllegalArgumentException(String.format("존재하지않는 회원 번호 %d 입니다.",parentId)));
         parent.update(updateRequestDto.getName(),updateRequestDto.getPassword(), updateRequestDto.getEmail(),updateRequestDto.getGender());
 
         return parent.getId();
     }
 
-    public void delete(Long parentId){
-        Parent parent = parentRepository.findById(parentId).orElseThrow(()->new IllegalArgumentException("존재하지 않는 Id입니다."+parentId));
-        parentRepository.delete(parent);
-    }
-
-    public List<StudentDetailResDto> findStudents(Long id){
+    public List<StudentDetailResDto> findStudents(Long id) throws IllegalArgumentException,ErrorException{
         Parent parent = parentRepository.findById(id)
-                .orElseThrow(()-> new IllegalArgumentException(String.format("%d, 존재하지 않는 Id입니다. ", id)));
-
+                .orElseThrow(()-> new IllegalArgumentException(String.format("유효하지않는 회원 번호 %d 입니다. ", id)));
         List<StudentDetailResDto> studentDetailsResDtos = new ArrayList<>();
         for(Student student : parent.getStudents()){
             studentDetailsResDtos.add(new StudentDetailResDto(student));
+        }
+        if(studentDetailsResDtos.size() == 0){
+            throw new ErrorException("자식이 추가되어있지 않습니다");
         }
 
         return studentDetailsResDtos;
     }
 
-    public Long login(LoginRequestDto loginRequestDto){
+    public ParentLoginResDto login(LoginRequestDto loginRequestDto)throws IllegalArgumentException{
         String parentEmail = loginRequestDto.getEmail();
         String parentPW = loginRequestDto.getPassword();
+
         Parent parent = parentRepository.findByEmailAndPassword(parentEmail,parentPW)
                 .orElseThrow(()->new IllegalArgumentException(String.format("존재하지 않는 ID,혹은 PW")));
-        return parent.getId();
+
+        ParentLoginResDto parentLoginResDto = new ParentLoginResDto(parent);
+        return parentLoginResDto;
     }
 
     public Boolean checkStudent(StudentRegistrationReqDto studentRegisterResDto, Parent parent){
         for(Student student : parent.getStudents()){
-            System.out.println(">>>> "+student.getEmail());
-            System.out.println(">>>> "+studentRegisterResDto.getEmail());
-            System.out.println("---"+student.getEmail().equals(studentRegisterResDto.getEmail()));
-
             if(student.getEmail().equals(studentRegisterResDto.getEmail())){
-                System.out.println(">>>>>>>>>>>");
                 return false;
             }
         }
-        System.out.println("--------------------");
         return true;
     }
 }
