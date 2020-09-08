@@ -20,8 +20,8 @@ spring:
 #      path: /h2-console
   datasource:
     url: jdbc:mysql://leehyunjong-springboot-webservice.cn66xll6corc.ap-northeast-2.rds.amazonaws.com:3306/springboot_webservice?useSSL=false
-      username: leehyunjong
-      password: dlguswhd3323!
+    username: leehyunjong
+    password: dlguswhd3323!
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
