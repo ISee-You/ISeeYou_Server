@@ -30,6 +30,8 @@ public class Parent {
     @Column(nullable = false)
     private String email;
 
+    private String token;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private GenderType gender;

@@ -41,6 +41,7 @@ public class Student {
     private Parent parent;
 
     @Builder
+
     public Student(String name, String email, String password, HandType handType, GenderType gender) {
         this.name = name;
         this.email = email;
