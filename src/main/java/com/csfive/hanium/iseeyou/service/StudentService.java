@@ -1,7 +1,11 @@
 package com.csfive.hanium.iseeyou.service;
 
+import com.csfive.hanium.iseeyou.domain.parent.Parent;
+import com.csfive.hanium.iseeyou.domain.parent.ParentRepository;
 import com.csfive.hanium.iseeyou.domain.student.Student;
 import com.csfive.hanium.iseeyou.domain.student.StudentRepository;
+import com.csfive.hanium.iseeyou.dto.parent.ParentEmailDto;
+import com.csfive.hanium.iseeyou.dto.parent.ParentNameAndEmailDto;
 import com.csfive.hanium.iseeyou.dto.student.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,6 +17,7 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 public class StudentService {
     private final StudentRepository studentRepository;
+    private final ParentRepository parentRepository;
 
     @Transactional
     public void save(final StudentSaveReqDto saveDto) {
@@ -59,10 +64,23 @@ public class StudentService {
         return studentRepository.findByEmailAndPassword(loginReqDto.getEmail(), loginReqDto.getPassword());
     }
 
-    public StudentRegisterResDto requestRegister(Long id) {
+    @Transactional
+    public void registerTo(final Long id, final ParentNameAndEmailDto parentDto) {
         Student student = studentRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException(String.format("id: %d, 존재하지 않는 아이디 입니다.", id)));
+        
+        Parent parent = parentRepository.findByNameAndEmail(parentDto.getName(), parentDto.getEmail());
 
-        return new StudentRegisterResDto(student);
+        student.changeParent(parent);
+    }
+
+    @Transactional
+    public void deleteTo(final Long id, final ParentEmailDto parentDto) {
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException(String.format("id: %d, 존재하지 않는 아이디 입니다.", id)));
+        
+        Parent parent = parentRepository.findByEmail(parentDto.getEmail());
+        
+        student.deleteTo(parent);
     }
 }
