@@ -1,14 +1,16 @@
 package com.csfive.hanium.iseeyou.domain.student;
 
+import com.csfive.hanium.iseeyou.domain.attitude.Attitude;
 import com.csfive.hanium.iseeyou.domain.parent.Parent;
 import com.csfive.hanium.iseeyou.enums.GenderType;
 import com.csfive.hanium.iseeyou.enums.HandType;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -39,6 +41,22 @@ public class Student {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PARENT_ID")
     private Parent parent;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Attitude> attitudes = new ArrayList<>();
+
+    public void changeParent(final Parent parent) {
+        this.parent = parent;
+        parent.getStudents().add(this);
+    }
+
+    public void deleteTo(final Parent parent) {
+        if (!this.parent.equals(parent)) {
+            throw new IllegalArgumentException("부모가 일치하지 않습니다.");
+        }
+        this.parent.getStudents().remove(this);
+        this.parent = null;
+    }
 
     @Builder
 

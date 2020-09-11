@@ -1,6 +1,8 @@
 package com.csfive.hanium.iseeyou.controller;
 
 import com.csfive.hanium.iseeyou.domain.student.Student;
+import com.csfive.hanium.iseeyou.dto.parent.ParentEmailDto;
+import com.csfive.hanium.iseeyou.dto.parent.ParentNameAndEmailDto;
 import com.csfive.hanium.iseeyou.dto.student.*;
 import com.csfive.hanium.iseeyou.service.StudentService;
 import lombok.RequiredArgsConstructor;
@@ -53,10 +55,25 @@ public class StudentController {
         return ResponseEntity.ok(LOGIN_SUCCESS);
     }
 
-    @PostMapping("{userId}/request/registration")
-    public ResponseEntity<StudentRegisterResDto> requestRegister(@PathVariable("userId") Long id) {
-        StudentRegisterResDto registerResDto = studentService.requestRegister(id);
+    @PostMapping("{userId}/parent")
+    public ResponseEntity<String> registerTo(@PathVariable("userId") Long id,
+                                             @RequestBody final ParentNameAndEmailDto parentNameAndEmailDto) {
+        try {
+            studentService.registerTo(id, parentNameAndEmailDto);
+            return ResponseEntity.ok(REGISTER_SUCCESS);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(REGISTER_FAIL);
+        }
+    }
 
-        return ResponseEntity.ok(registerResDto);
+    @DeleteMapping("{userId}/parent")
+    public ResponseEntity<String> deleteTo(@PathVariable("userId") Long id,
+                                           @RequestBody final ParentEmailDto parentEmailDto) {
+        try {
+            studentService.deleteTo(id, parentEmailDto);
+            return ResponseEntity.ok(DELETE_USER);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(DELETE_FAIL);
+        }
     }
 }
