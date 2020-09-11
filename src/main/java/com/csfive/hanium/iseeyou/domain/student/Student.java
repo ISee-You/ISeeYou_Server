@@ -1,14 +1,11 @@
 package com.csfive.hanium.iseeyou.domain.student;
 
-import com.csfive.hanium.iseeyou.domain.attitude.Attitude;
 import com.csfive.hanium.iseeyou.domain.parent.Parent;
 import com.csfive.hanium.iseeyou.enums.GenderType;
 import com.csfive.hanium.iseeyou.enums.HandType;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -42,8 +39,6 @@ public class Student {
     @JoinColumn(name = "PARENT_ID")
     private Parent parent;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Attitude> attitudes = new ArrayList<>();
 
     public void changeParent(final Parent parent) {
         this.parent = parent;
