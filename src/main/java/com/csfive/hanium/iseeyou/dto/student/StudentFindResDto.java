@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class StudentFindResDto {
+    private Long id;
     private String name;
     private String email;
     private String password;
@@ -17,6 +18,7 @@ public class StudentFindResDto {
     private GenderType genderType;
 
     public StudentFindResDto(Student student) {
+        this.id = student.getId();
         this.name = student.getName();
         this.email = student.getEmail();
         this.password = student.getPassword();

@@ -4,8 +4,11 @@ import com.csfive.hanium.iseeyou.domain.student.Student;
 import com.csfive.hanium.iseeyou.dto.student.*;
 import com.csfive.hanium.iseeyou.service.StudentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.persistence.NoResultException;
 
 import static com.csfive.hanium.iseeyou.utils.ResponseMessage.*;
 
@@ -45,12 +48,13 @@ public class StudentController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody final StudentLoginReqDto loginReqDto) {
+    public ResponseEntity<StudentFindResDto> login(@RequestBody final StudentLoginReqDto loginReqDto) {
         Student student = studentService.login(loginReqDto);
+        StudentFindResDto studentFindResDto = studentService.find(student.getId());
         if (student == null) {
-            return ResponseEntity.badRequest().body(LOGIN_FAIL);
+            throw new NoResultException("없는 사용자입니다.");
         }
-        return ResponseEntity.ok(LOGIN_SUCCESS);
+        return ResponseEntity.status(HttpStatus.OK).body(studentFindResDto);
     }
 
     @PostMapping("{userId}/request/registration")
