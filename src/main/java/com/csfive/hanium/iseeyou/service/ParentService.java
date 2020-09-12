@@ -5,7 +5,6 @@ import com.csfive.hanium.iseeyou.domain.parent.ParentRepository;
 import com.csfive.hanium.iseeyou.domain.student.Student;
 import com.csfive.hanium.iseeyou.domain.student.StudentRepository;
 import com.csfive.hanium.iseeyou.dto.parent.*;
-//import com.csfive.hanium.iseeyou.dto.parent.ParentAddChildRequestDto;
 import com.csfive.hanium.iseeyou.dto.student.StudentDetailResDto;
 import com.csfive.hanium.iseeyou.utils.ErrorException;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 @Transactional
 @RequiredArgsConstructor
@@ -24,9 +24,14 @@ public class ParentService {
     private final ParentRepository parentRepository;
     private final StudentRepository studentRepository;
 
+    public void signup(ParentSavetRequestDto requestDto) throws ErrorException{
+        Parent parent = parentRepository.findByEmail(requestDto.getEmail());
+        if(parent==null){
+            parentRepository.save(requestDto.toEntity());
+        }else{
+            throw new ErrorException(String.format("존재하는 Email입니다"));
+        }
 
-    public void signup(ParentSavetRequestDto requestDto){
-        parentRepository.save(requestDto.toEntity());
     }
 
     public void studentRegistration(Long parentId, StudentRegistrationReqDto studentRegistrationReqDto) throws IllegalArgumentException,ErrorException {

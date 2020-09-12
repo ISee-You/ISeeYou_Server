@@ -25,6 +25,7 @@ public class ResponseMessage {
     public static String CONTENT_FILE = "파일이 있습니다.";
 
     public static String SAVE_SUCCESS ="저장 성공";
+    public static String UDATE_SUCCESS = "업데이트 성공";
 
     public static String REGISTER_SUCCESS = "등록 성공";
     public static String REGISTER_FAIL = "등록 실패";
