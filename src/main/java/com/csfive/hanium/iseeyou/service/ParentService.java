@@ -6,7 +6,7 @@ import com.csfive.hanium.iseeyou.domain.student.Student;
 import com.csfive.hanium.iseeyou.domain.student.StudentRepository;
 import com.csfive.hanium.iseeyou.dto.parent.*;
 import com.csfive.hanium.iseeyou.dto.student.StudentDetailResDto;
-import com.csfive.hanium.iseeyou.utils.ErrorException;
+import com.csfive.hanium.iseeyou.exception.ErrorException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

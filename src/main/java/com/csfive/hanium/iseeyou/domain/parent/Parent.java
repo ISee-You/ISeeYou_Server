@@ -49,12 +49,12 @@ public class Parent {
 
     public void addStudent(Student student){
         this.students.add(student);
-        student.setParent(this);
+        student.changeStudent(this);
     }
 
     public void deleteStudent(Student student){
         this.students.remove(student);
-        student.setParent(null);
+        student.removeParent();
     }
 
     public void update(String name, String password, String email, GenderType gender){

@@ -4,15 +4,16 @@ import com.csfive.hanium.iseeyou.domain.parent.Parent;
 import com.csfive.hanium.iseeyou.domain.parent.ParentRepository;
 import com.csfive.hanium.iseeyou.domain.student.Student;
 import com.csfive.hanium.iseeyou.domain.student.StudentRepository;
-import com.csfive.hanium.iseeyou.dto.parent.ParentEmailDto;
-import com.csfive.hanium.iseeyou.dto.parent.ParentNameAndEmailDto;
 import com.csfive.hanium.iseeyou.dto.student.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class StudentService {
@@ -20,67 +21,89 @@ public class StudentService {
     private final ParentRepository parentRepository;
 
     @Transactional
-    public void save(final StudentSaveReqDto saveDto) {
+    public Long save(final StudentSaveRequest saveRequest) {
+        validateDuplicateEmail(saveRequest.getEmail());
         Student student = Student.builder()
-                .name(saveDto.getName())
-                .email(saveDto.getEmail())
-                .password(saveDto.getPassword())
-                .handType(saveDto.getHandType())
-                .gender(saveDto.getGenderType())
+                .name(saveRequest.getName())
+                .email(saveRequest.getEmail())
+                .password(saveRequest.getPassword())
+                .handType(saveRequest.getHandType())
+                .gender(saveRequest.getGenderType())
                 .build();
 
         studentRepository.save(student);
+        return student.getId();
     }
 
     @Transactional
-    public void update(final Long id, final StudentUpdateReqDto updateDto) {
-        Student student = studentRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException(String.format("id: %d, 존재하지 않는 아이디 입니다.", id)));
+    public void update(final Long studentId, final StudentUpdateRequest updateRequest) {
+        Student student = getStudent(studentId);
 
-        student.setName(updateDto.getName());
-        student.setEmail(updateDto.getEmail());
-        student.setPassword(updateDto.getPassword());
-        student.setHandType(updateDto.getHandType());
-        student.setGender(updateDto.getGenderType());
+        if(!student.isEqualsOfEmail(updateRequest.getEmail())){
+            validateDuplicateEmail(updateRequest.getEmail());
+        }
+        student.update(updateRequest.getName(), updateRequest.getEmail(), updateRequest.getPassword(), updateRequest.getHandType(), updateRequest.getGenderType());
     }
 
     @Transactional
-    public void delete(final Long id) {
-        Student student = studentRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException(String.format("id: %d, 존재하지 않는 아이디 입니다.", id)));
-
+    public void delete(final Long studentId) {
+        Student student = getStudent(studentId);
         studentRepository.delete(student);
     }
 
-    public StudentFindResDto find(final Long id) {
-        Student student = studentRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException(String.format("id: %d, 존재하지 않는 아이디 입니다.", id)));
-
-        StudentFindResDto resDto = new StudentFindResDto(student);
-        return resDto;
+    public Long find(final Long studentId) {
+        Student findStudent = getStudent(studentId);
+        return findStudent.getId();
     }
 
-    public Student login(final StudentLoginReqDto loginReqDto) {
-        return studentRepository.findByEmailAndPassword(loginReqDto.getEmail(), loginReqDto.getPassword());
+    public Long login(final StudentLoginRequest loginRequest) {
+        Student findStudent = getStudent(loginRequest);
+        return findStudent.getId();
     }
 
     @Transactional
-    public void registerTo(final Long id, final ParentNameAndEmailDto parentDto) {
-        Student student = studentRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException(String.format("id: %d, 존재하지 않는 아이디 입니다.", id)));
-        
-        Parent parent = parentRepository.findByNameAndEmail(parentDto.getName(), parentDto.getEmail());
+    public void registerParent(final Long studentId, final Long parentId) {
+        Student student = getStudent(studentId);
+        Parent parent = parentRepository.getOne(parentId);
 
         student.changeParent(parent);
     }
 
     @Transactional
-    public void deleteTo(final Long id, final ParentEmailDto parentDto) {
-        Student student = studentRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException(String.format("id: %d, 존재하지 않는 아이디 입니다.", id)));
-        
-        Parent parent = parentRepository.findByEmail(parentDto.getEmail());
-        
-        student.deleteTo(parent);
+    public void deleteParent(final Long studentId, final Long parentId) {
+        Student student = getStudent(studentId);
+        Parent parent = parentRepository.getOne(parentId);
+
+        student.removeParent(parent);
+    }
+
+    private Student getStudent(final Long studentId) {
+        return studentRepository.findById(studentId)
+                .orElseThrow(() -> new NoSuchElementException(String.format("id: %d, 존재하지 않는 아이디 입니다.", studentId)));
+    }
+
+    private Student getStudent(final StudentLoginRequest loginRequest) {
+        return studentRepository.findByEmailAndPassword(loginRequest.getEmail(), loginRequest.getPassword())
+                .orElseThrow(() -> new IllegalArgumentException(String.format("input email: %s, input password: %s 이메일 또는 비밀번호가 다릅니다.",
+                        loginRequest.getEmail(), loginRequest.getPassword())));
+    }
+
+    private void validateDuplicateEmail(final String email) {
+        Optional<Student> student = studentRepository.findByEmail(email);
+        if (student.isPresent()) {
+            throw new IllegalArgumentException(String.format("email: %s, 이미 존재하는 이메일입니다.", email));
+        }
+    }
+
+    private void validateEqualsEmail(final String currentEmail, final String inputEmail) {
+        if (!currentEmail.equals(inputEmail)) {
+            throw new IllegalArgumentException(String.format("input email: %s, 이메일이 다릅니다.", inputEmail));
+        }
+    }
+
+    private void validateEqualsPassword(final String currentPassword, final String inputPassword) {
+        if (!currentPassword.equals(inputPassword)) {
+            throw new IllegalArgumentException(String.format("input password: %s, 비밀번호가 다릅니다.", inputPassword));
+        }
     }
 }

@@ -4,15 +4,13 @@ import com.csfive.hanium.iseeyou.dto.parent.*;
 import com.csfive.hanium.iseeyou.dto.student.StudentDetailResDto;
 import com.csfive.hanium.iseeyou.service.ParentService;
 import com.csfive.hanium.iseeyou.service.ValidateService;
-import com.csfive.hanium.iseeyou.utils.ErrorException;
+import com.csfive.hanium.iseeyou.exception.ErrorException;
 import com.csfive.hanium.iseeyou.utils.StatusCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
-import sun.reflect.annotation.ExceptionProxy;
 
 import javax.validation.Valid;
 import java.util.List;
