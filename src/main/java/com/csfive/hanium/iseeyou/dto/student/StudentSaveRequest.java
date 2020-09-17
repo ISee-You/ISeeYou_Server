@@ -8,10 +8,11 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class StudentUpdateReqDto {
+public class StudentSaveRequest {
     private String name;
     private String email;
     private String password;
     private HandType handType;
     private GenderType genderType;
+
 }

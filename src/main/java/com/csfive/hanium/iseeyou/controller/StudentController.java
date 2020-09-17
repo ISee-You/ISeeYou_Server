@@ -1,83 +1,109 @@
 package com.csfive.hanium.iseeyou.controller;
 
-import com.csfive.hanium.iseeyou.domain.student.Student;
-import com.csfive.hanium.iseeyou.dto.parent.ParentEmailDto;
-import com.csfive.hanium.iseeyou.dto.parent.ParentNameAndEmailDto;
 import com.csfive.hanium.iseeyou.dto.student.*;
 import com.csfive.hanium.iseeyou.service.StudentService;
+import com.csfive.hanium.iseeyou.utils.DefaultResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.NoResultException;
-
 import static com.csfive.hanium.iseeyou.utils.ResponseMessage.*;
+import static com.csfive.hanium.iseeyou.utils.StatusCode.*;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v1/stduents")
+@RequestMapping(value = "/api/v1/students")
 public class StudentController {
 
     private final StudentService studentService;
 
     @PostMapping
-    public ResponseEntity<String> save(@RequestBody final StudentSaveReqDto saveDto) {
-        studentService.save(saveDto);
-
-        return ResponseEntity.ok(CREATE_USER);
+    public ResponseEntity save(@RequestBody final StudentSaveRequest saveRequest) {
+        try {
+            Long studentId = studentService.save(saveRequest);
+            return ResponseEntity.ok(DefaultResponse.res(OK, CREATE_USER, studentId));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.badRequest()
+                    .body(DefaultResponse.res(BAD_REQUEST, NOT_CREATE_USER));
+        }
     }
 
-    @PutMapping("/{userId}")
-    public ResponseEntity<String> update(@PathVariable("userId") Long id, @RequestBody final StudentUpdateReqDto updateDto) {
-        studentService.update(id, updateDto);
-
-        return ResponseEntity.ok(UPDATE_USER);
+    @PutMapping("/{studentId}")
+    public ResponseEntity update(@PathVariable("studentId") Long studentId,
+                                 @RequestBody final StudentUpdateRequest updateRequest) {
+        try {
+            studentService.update(studentId, updateRequest);
+            return ResponseEntity.ok(DefaultResponse.res(OK, UPDATE_USER));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.badRequest()
+                    .body(DefaultResponse.res(BAD_REQUEST, UPDATE_FAIL_USER));
+        }
     }
 
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<String> delete(@PathVariable("userId") Long id) {
-        studentService.delete(id);
-
-        return ResponseEntity.ok(DELETE_USER);
+    @DeleteMapping("/{studentId}")
+    public ResponseEntity delete(@PathVariable("studentId") final Long studentId) {
+        try {
+            studentService.delete(studentId);
+            return ResponseEntity.ok(DefaultResponse.res(OK, DELETE_USER));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.badRequest()
+                    .body(DefaultResponse.res(BAD_REQUEST, DELETE_FAIL));
+        }
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<StudentFindResDto> findBy(@PathVariable("userId") Long id) {
-        StudentFindResDto resDto = studentService.find(id);
-
-        return ResponseEntity.ok(resDto);
+    @GetMapping("/{studentId}")
+    public ResponseEntity find(@PathVariable("studentId") final Long studentId) {
+        try {
+            Long findStudentId = studentService.find(studentId);
+            return ResponseEntity.ok(DefaultResponse.res(OK, FIND_USER, findStudentId));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.badRequest()
+                    .body(DefaultResponse.res(BAD_REQUEST, NOT_FOUND_USER));
+        }
     }
 
     @PostMapping("/login")
-    public ResponseEntity<StudentFindResDto> login(@RequestBody final StudentLoginReqDto loginReqDto) {
-        Student student = studentService.login(loginReqDto);
-        StudentFindResDto studentFindResDto = studentService.find(student.getId());
-        if (student == null) {
-            throw new NoResultException("없는 사용자입니다.");
+    public ResponseEntity login(@RequestBody final StudentLoginRequest loginRequest) {
+        try {
+            Long studentId = studentService.login(loginRequest);
+            return ResponseEntity.ok(DefaultResponse.res(OK, LOGIN_SUCCESS, studentId));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.badRequest()
+                    .body(DefaultResponse.res(BAD_REQUEST, LOGIN_FAIL));
         }
-        return ResponseEntity.status(HttpStatus.OK).body(studentFindResDto);
+
     }
 
-    @PostMapping("{userId}/parent")
-    public ResponseEntity<String> registerTo(@PathVariable("userId") Long id,
-                                             @RequestBody final ParentNameAndEmailDto parentNameAndEmailDto) {
+    @PostMapping("{studentId}/{parentId}")
+    public ResponseEntity registerParent(@PathVariable("studentId") final Long studentId,
+                                         @PathVariable("parentId") final Long parentId) {
         try {
-            studentService.registerTo(id, parentNameAndEmailDto);
-            return ResponseEntity.ok(REGISTER_SUCCESS);
+            studentService.registerParent(studentId, parentId);
+            return ResponseEntity.ok(DefaultResponse.res(OK, REGISTER_SUCCESS));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(REGISTER_FAIL);
+            log.error(e.getMessage());
+            return ResponseEntity.badRequest()
+                    .body(DefaultResponse.res(BAD_REQUEST, REGISTER_FAIL));
         }
     }
 
-    @DeleteMapping("{userId}/parent")
-    public ResponseEntity<String> deleteTo(@PathVariable("userId") Long id,
-                                           @RequestBody final ParentEmailDto parentEmailDto) {
+    @DeleteMapping("{studentId}/{parentId}")
+    public ResponseEntity deleteParent(@PathVariable("studentId") final Long studentId,
+                                       @PathVariable("parentId") final Long parentId) {
         try {
-            studentService.deleteTo(id, parentEmailDto);
-            return ResponseEntity.ok(DELETE_USER);
+            studentService.deleteParent(studentId, parentId);
+            return ResponseEntity.ok(DefaultResponse.res(OK, DELETE_SUCCESS));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(DELETE_FAIL);
+            log.error(e.getMessage());
+            return ResponseEntity.badRequest()
+                    .body(DefaultResponse.res(BAD_REQUEST, DELETE_FAIL));
         }
     }
 }
