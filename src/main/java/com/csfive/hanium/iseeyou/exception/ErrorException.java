@@ -1,5 +1,6 @@
-package com.csfive.hanium.iseeyou.utils;
+package com.csfive.hanium.iseeyou.exception;
 
+import com.csfive.hanium.iseeyou.utils.StatusCode;
 import lombok.Getter;
 
 @Getter
