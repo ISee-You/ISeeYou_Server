@@ -9,7 +9,6 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Student {
 
@@ -39,22 +38,44 @@ public class Student {
     @JoinColumn(name = "PARENT_ID")
     private Parent parent;
 
-
     public void changeParent(final Parent parent) {
         this.parent = parent;
         parent.getStudents().add(this);
     }
 
-    public void deleteTo(final Parent parent) {
-        if (!this.parent.equals(parent)) {
-            throw new IllegalArgumentException("부모가 일치하지 않습니다.");
-        }
+    public void removeParent(final Parent parent) {
+        validateEqualsParent(parent);
         this.parent.getStudents().remove(this);
+        removeParent();
+    }
+
+    public void removeParent() {
         this.parent = null;
     }
 
-    @Builder
+    public void changeStudent(final Parent parent) {
+        this.parent = parent;
+    }
 
+    public void update(final String name, final String email, final String password, final HandType handType, final GenderType genderType) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.handType = handType;
+        this.gender = genderType;
+    }
+
+    public boolean isEqualsOfEmail(final String email) {
+        return getEmail().equals(email);
+    }
+
+    private void validateEqualsParent(final Parent parent) {
+        if (!this.parent.equals(parent)) {
+            throw new IllegalArgumentException("부모가 일치하지 않습니다.");
+        }
+    }
+
+    @Builder
     public Student(String name, String email, String password, HandType handType, GenderType gender) {
         this.name = name;
         this.email = email;
