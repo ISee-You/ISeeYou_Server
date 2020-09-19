@@ -60,10 +60,10 @@ public class ParentController {
         }
     }
 
-    @PostMapping("/{parentId}/Registration")
-    public ResponseEntity studentRegistration(@PathVariable("parentId") Long parentId,@RequestBody StudentRegistrationReqDto studentRegistrationReqDto){
+    @PostMapping("/{parentId}/Registration/{studentId}")
+    public ResponseEntity studentRegistration(@PathVariable("parentId") Long parentId,@PathVariable("studentId")Long studentId){
         try{
-            Long reqStudent_id = parentService.studentRegistration(parentId, studentRegistrationReqDto);
+            Long reqStudent_id = parentService.studentRegistration(parentId, studentId);
             return ResponseEntity.ok(DefaultResponse.res(OK,SAVE_SUCCESS,reqStudent_id));
         }catch (ErrorException e){
             return ResponseEntity.status(e.getERR_CODE()).body(DefaultResponse.res(e.getERR_CODE(),e.getMessage()));

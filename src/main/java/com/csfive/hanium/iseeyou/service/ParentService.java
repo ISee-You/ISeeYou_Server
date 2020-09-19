@@ -34,16 +34,13 @@ public class ParentService {
         }
     }
 
-    public long studentRegistration(Long parentId, StudentRegistrationReqDto studentRegistrationReqDto) throws IllegalArgumentException,ErrorException {
-        String studentName = studentRegistrationReqDto.getName();
-        String studentEmail = studentRegistrationReqDto.getEmail();
-
-        Student student = studentRepository.findByNameAndEmail(studentName,studentEmail)
-            .orElseThrow(()->new IllegalArgumentException(String.format("존재하지않는 Name : %s, 혹은 Email : %s",studentName,studentEmail)));
+    public long studentRegistration(Long parentId, Long studentId) throws IllegalArgumentException,ErrorException {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(()->new IllegalArgumentException(String.format("존재하지않는 학생 ID(%d) 입니다",studentId)));
         Parent parent = parentRepository.findById(parentId)
             .orElseThrow(()->new IllegalArgumentException(String.format("존재하지 않는 사용자입니다 ID : %d",parentId)));
 
-        duplicateEmail(studentRegistrationReqDto, parent, student);
+        duplicateStudent(parent, student);
         return student.getId();
     }
 
@@ -88,9 +85,9 @@ public class ParentService {
         return parentLoginResDto;
     }
 
-    public void duplicateEmail(StudentRegistrationReqDto studentRegisterResDto, Parent parent,Student reqStudent) throws ErrorException{
+    public void duplicateStudent(Parent parent,Student reqStudent) throws ErrorException{
         for(Student student : parent.getStudents()){
-            if(student.getEmail().equals(studentRegisterResDto.getEmail())){
+            if(student.getEmail().equals(reqStudent.getEmail())){
                 throw new ErrorException(String.format("이미 존재하는 학생입니다. (%s)",student.getName()));
             }
         }
