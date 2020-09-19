@@ -17,7 +17,7 @@ public class HomeController {
     public String home( HttpServletRequest request) {
         getIp(request);
 
-        return "redirect:https://www.naver.com/";
+        return "redirect:http://54.180.174.151:8080/";
     }
 
     private String getIp(HttpServletRequest request) {
