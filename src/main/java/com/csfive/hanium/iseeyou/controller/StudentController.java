@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 import static com.csfive.hanium.iseeyou.utils.ResponseMessage.*;
 import static com.csfive.hanium.iseeyou.utils.StatusCode.*;
 
@@ -20,9 +22,10 @@ public class StudentController {
     private final StudentService studentService;
 
     @PostMapping
-    public ResponseEntity save(@RequestBody final StudentSaveRequest saveRequest) {
+    public ResponseEntity save(@RequestBody final StudentSaveRequest saveRequest, HttpServletRequest request) {
         try {
             Long studentId = studentService.save(saveRequest);
+            getIp(request);
             return ResponseEntity.ok(DefaultResponse.res(OK, CREATE_USER, studentId));
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -106,4 +109,37 @@ public class StudentController {
                     .body(DefaultResponse.res(BAD_REQUEST, DELETE_FAIL));
         }
     }
+
+    private String getIp(HttpServletRequest request) {
+
+        String ip = request.getHeader("X-Forwarded-For");
+
+        log.info(">>>> X-FORWARDED-FOR : " + ip);
+
+        if (ip == null) {
+            ip = request.getHeader("Proxy-Client-IP");
+            log.info(">>>> Proxy-Client-IP : " + ip);
+        }
+        if (ip == null) {
+            ip = request.getHeader("WL-Proxy-Client-IP"); // 웹로직
+            log.info(">>>> WL-Proxy-Client-IP : " + ip);
+        }
+        if (ip == null) {
+            ip = request.getHeader("HTTP_CLIENT_IP");
+            log.info(">>>> HTTP_CLIENT_IP : " + ip);
+        }
+        if (ip == null) {
+            ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+            log.info(">>>> HTTP_X_FORWARDED_FOR : " + ip);
+        }
+        if (ip == null) {
+            ip = request.getRemoteAddr();
+        }
+
+        log.info(">>>> Result : IP Address : "+ip);
+
+        return ip;
+
+    }
+
 }
