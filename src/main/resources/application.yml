@@ -1,5 +1,6 @@
 server:
   port: 8090
+
 ---
 spring:
   profiles:
@@ -22,7 +23,7 @@ spring:
 #  datasource:
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     properties:
       hibernate:
         show_sql: true

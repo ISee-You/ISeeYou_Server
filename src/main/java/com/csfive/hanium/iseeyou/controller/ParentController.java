@@ -4,21 +4,21 @@ import com.csfive.hanium.iseeyou.dto.parent.*;
 import com.csfive.hanium.iseeyou.dto.student.StudentDetailResDto;
 import com.csfive.hanium.iseeyou.service.ParentService;
 import com.csfive.hanium.iseeyou.service.ValidateService;
+import com.csfive.hanium.iseeyou.utils.DefaultResponse;
 import com.csfive.hanium.iseeyou.utils.ErrorException;
 import com.csfive.hanium.iseeyou.utils.StatusCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
-import sun.reflect.annotation.ExceptionProxy;
 
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
 import static com.csfive.hanium.iseeyou.utils.ResponseMessage.*;
+import static com.csfive.hanium.iseeyou.utils.StatusCode.*;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/parents")
@@ -35,14 +35,14 @@ public class ParentController {
                 model.addAttribute("saveRequestDto",saveRequestDto);
 
                 Map<String, String> validatorResult = validateService.validateHandling(errors);
-                for(String key : validatorResult.keySet()){
-                    model.addAttribute(key, validatorResult.get(key));
-                }
+//                for(String key : validatorResult.keySet()){
+//                    model.addAttribute(key, validatorResult.get(key));
+//                }
                 return ResponseEntity.status(StatusCode.BAD_REQUEST).body(validatorResult);
             }
 
-            parentService.signup(saveRequestDto);
-            return ResponseEntity.ok(CREATE_USER);
+            long parent_id = parentService.signup(saveRequestDto);
+            return ResponseEntity.ok(DefaultResponse.res(OK,CREATE_USER,parent_id));
         }catch (Exception e){
             return ResponseEntity.status(StatusCode.BAD_REQUEST).body(e.getMessage());
         }
@@ -53,33 +53,33 @@ public class ParentController {
     public ResponseEntity login(@RequestBody LoginRequestDto loginRequestDto){
         try{
             ParentLoginResDto parentDetail = parentService.login(loginRequestDto);
-            return ResponseEntity.ok().body(parentDetail);
+            return ResponseEntity.ok(DefaultResponse.res(OK,LOGIN_SUCCESS,parentDetail));
         }catch (Exception e){
             e.printStackTrace();
-            return ResponseEntity.status(StatusCode.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(StatusCode.BAD_REQUEST).body(DefaultResponse.res(BAD_REQUEST,e.getMessage()));
         }
     }
 
     @PostMapping("/{parentId}/Registration")
-    public ResponseEntity<String> studentRegistration(@PathVariable("parentId") Long parentId,@RequestBody StudentRegistrationReqDto studentRegistrationReqDto){
+    public ResponseEntity studentRegistration(@PathVariable("parentId") Long parentId,@RequestBody StudentRegistrationReqDto studentRegistrationReqDto){
         try{
-            parentService.studentRegistration(parentId, studentRegistrationReqDto);
-            return ResponseEntity.ok(SAVE_SUCCESS);
+            Long reqStudent_id = parentService.studentRegistration(parentId, studentRegistrationReqDto);
+            return ResponseEntity.ok(DefaultResponse.res(OK,SAVE_SUCCESS,reqStudent_id));
         }catch (ErrorException e){
-            return ResponseEntity.status(e.getERR_CODE()).body(e.getMessage());
+            return ResponseEntity.status(e.getERR_CODE()).body(DefaultResponse.res(e.getERR_CODE(),e.getMessage()));
         }catch (IllegalArgumentException e){
-            return ResponseEntity.status(StatusCode.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(StatusCode.BAD_REQUEST).body(DefaultResponse.res(BAD_REQUEST,e.getMessage()));
         }
     }
 
     @DeleteMapping("/{parentId}/DeletStudent")
-    public ResponseEntity<String> deleteStudent(@PathVariable("parentId") Long parentId, @RequestBody ParentDeleteStudentReqDto parentDeleteStudentReqDto){
+    public ResponseEntity deleteStudent(@PathVariable("parentId") Long parentId, @RequestBody ParentDeleteStudentReqDto parentDeleteStudentReqDto){
         try{
             parentService.deleteStudent(parentId, parentDeleteStudentReqDto);
-            return ResponseEntity.ok(DELETE_USER);
+            return ResponseEntity.ok(DefaultResponse.res(OK,DELETE_USER));
         }catch (Exception e){
             e.printStackTrace();
-            return ResponseEntity.status(StatusCode.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(StatusCode.BAD_REQUEST).body(DefaultResponse.res(BAD_REQUEST,e.getMessage()));
         }
     }
 
@@ -87,11 +87,11 @@ public class ParentController {
     public ResponseEntity findStudent(@PathVariable("parentId")Long id){
         try{
             List<StudentDetailResDto> studentList = parentService.findStudents(id);
-            return ResponseEntity.ok(studentList);
+            return ResponseEntity.ok(DefaultResponse.res(OK,FIND_USER,studentList));
         }catch (IllegalArgumentException e){
-            return ResponseEntity.status(StatusCode.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(StatusCode.BAD_REQUEST).body(DefaultResponse.res(BAD_REQUEST,e.getMessage()));
         }catch (ErrorException e){
-            return ResponseEntity.status(e.getERR_CODE()).body(e.getMessage());
+            return ResponseEntity.status(e.getERR_CODE()).body(DefaultResponse.res(e.getERR_CODE(),e.getMessage()));
         }
     }
 
@@ -99,9 +99,9 @@ public class ParentController {
     public ResponseEntity update(@PathVariable("parentId") Long id, @RequestBody ParentUpdateRequestDto updateRequestDto){
         try{
             Long studentid = parentService.update(id, updateRequestDto);
-            return ResponseEntity.ok(studentid);
+            return ResponseEntity.ok(DefaultResponse.res(OK,UDATE_SUCCESS,studentid));
         }catch (Exception e){
-            return ResponseEntity.status(StatusCode.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(StatusCode.BAD_REQUEST).body(DefaultResponse.res(BAD_REQUEST,e.getMessage()));
         }
     }
 }

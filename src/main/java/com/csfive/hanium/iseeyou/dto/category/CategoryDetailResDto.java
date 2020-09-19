@@ -10,9 +10,9 @@ public class CategoryDetailResDto {
     private int year;
     private int month;
     private int day;
-    private int time_book;
-    private int time_pen;
-    private int time_laptop;
+    private int booktime;
+    private int pentime;
+    private int laptoptime;
     private Long student_id;
     private String student_email;
 
@@ -21,9 +21,9 @@ public class CategoryDetailResDto {
         this.year = category.getYear();
         this.month = category.getMonth();
         this.day = category.getDay();
-        this.time_book = category.getTime_book();
-        this.time_pen = category.getTime_pen();
-        this.time_laptop = category.getTime_laptop();
+        this.booktime = category.getBookTime();
+        this.pentime = category.getPenTime();
+        this.laptoptime = category.getLaptopTime();
         this.student_id = category.getStudent().getId();
         this.student_email = category.getStudent().getEmail();
     }

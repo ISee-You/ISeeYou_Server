@@ -31,4 +31,10 @@ public class ResponseMessage {
     public static String REGISTER_FAIL = "등록 실패";
 
     public static String DELETE_FAIL = "삭제 실패";
+
+    public static String FIND_CATEGORY = "카테고리를 찾았습니다";
+    public static String FAIL_CATEGORY = "카테고리를 찾지못했습니다";
+
+    public static String FIND_USER = "사용자를 찾았습니다";
+    public static String FAIL_USER = "사용자를 찾지못했습니다";
 }

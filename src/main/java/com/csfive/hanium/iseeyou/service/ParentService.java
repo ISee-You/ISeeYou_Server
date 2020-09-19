@@ -24,17 +24,17 @@ public class ParentService {
     private final ParentRepository parentRepository;
     private final StudentRepository studentRepository;
 
-    public void signup(ParentSavetRequestDto requestDto) throws ErrorException{
+    public Long signup(ParentSavetRequestDto requestDto) throws ErrorException{
         Parent parent = parentRepository.findByEmail(requestDto.getEmail());
+        System.out.println(">>>>>>> parent result :"+parent);
         if(parent==null){
-            parentRepository.save(requestDto.toEntity());
+            return parentRepository.save(requestDto.toEntity()).getId();
         }else{
             throw new ErrorException(String.format("존재하는 Email입니다"));
         }
-
     }
 
-    public void studentRegistration(Long parentId, StudentRegistrationReqDto studentRegistrationReqDto) throws IllegalArgumentException,ErrorException {
+    public long studentRegistration(Long parentId, StudentRegistrationReqDto studentRegistrationReqDto) throws IllegalArgumentException,ErrorException {
         String studentName = studentRegistrationReqDto.getName();
         String studentEmail = studentRegistrationReqDto.getEmail();
 
@@ -43,11 +43,8 @@ public class ParentService {
         Parent parent = parentRepository.findById(parentId)
             .orElseThrow(()->new IllegalArgumentException(String.format("존재하지 않는 사용자입니다 ID : %d",parentId)));
 
-        if(checkStudent(studentRegistrationReqDto, parent)){
-            parent.addStudent(student);
-        }else{
-            throw new ErrorException(String.format("이미 존재하는 학생입니다. (%s)",student.getName()));
-        }
+        duplicateEmail(studentRegistrationReqDto, parent, student);
+        return student.getId();
     }
 
     public void deleteStudent(Long parentId, ParentDeleteStudentReqDto parentDeleteStudentReqDto)throws IllegalArgumentException{
@@ -91,12 +88,12 @@ public class ParentService {
         return parentLoginResDto;
     }
 
-    public Boolean checkStudent(StudentRegistrationReqDto studentRegisterResDto, Parent parent){
+    public void duplicateEmail(StudentRegistrationReqDto studentRegisterResDto, Parent parent,Student reqStudent) throws ErrorException{
         for(Student student : parent.getStudents()){
             if(student.getEmail().equals(studentRegisterResDto.getEmail())){
-                return false;
+                throw new ErrorException(String.format("이미 존재하는 학생입니다. (%s)",student.getName()));
             }
         }
-        return true;
+        parent.addStudent(reqStudent);
     }
 }

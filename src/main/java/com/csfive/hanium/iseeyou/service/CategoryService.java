@@ -2,18 +2,22 @@ package com.csfive.hanium.iseeyou.service;
 
 import com.csfive.hanium.iseeyou.domain.category.Category;
 import com.csfive.hanium.iseeyou.domain.category.CategoryRepository;
+import com.csfive.hanium.iseeyou.domain.category.CategoryTimes;
 import com.csfive.hanium.iseeyou.domain.student.Student;
 import com.csfive.hanium.iseeyou.domain.student.StudentRepository;
 import com.csfive.hanium.iseeyou.dto.category.CategoryDetailReqDto;
 import com.csfive.hanium.iseeyou.dto.category.CategoryDetailResDto;
+import com.csfive.hanium.iseeyou.dto.category.CategoryProficiencyResDto;
 import com.csfive.hanium.iseeyou.dto.category.CategoryUpdateReqDtp;
+import com.csfive.hanium.iseeyou.domain.category.Proficiencytime;
 import com.csfive.hanium.iseeyou.utils.ErrorException;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Transactional
 @RequiredArgsConstructor
@@ -23,41 +27,57 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final StudentRepository studentRepository;
 
-    public void create(Long id) throws ErrorException{  //학생이 회원가입했을때 category도 추가(test용)
-        Student student = studentRepository.findById(id)
-                .orElseThrow(()->new ErrorException("해당 학생이없습니다"));
-        Category category = Category.builder()
-                .student(student)
-                .build();
-        categoryRepository.save(category);
-
-    }
-
-    public void updateCategory(Long student_id, CategoryUpdateReqDtp categoryUpdateReqDtp) throws ErrorException{ //AI서버에서 category부분 업데이트해주는 부분(test용)
-        Student student = studentRepository.findById(student_id)
-                .orElseThrow(()->new ErrorException("해당 학생이없습니다"));
-        Category category = categoryRepository.findByStudent(student)
-                .orElseThrow(()->new ErrorException(String.format("유효하지 않은 접근입니다.(student_id로 category 찾을수 없음)")));
-
-
-        category.update(categoryUpdateReqDtp.getYear(),categoryUpdateReqDtp.getMonth(),categoryUpdateReqDtp.getDay(),categoryUpdateReqDtp.getTime_pen(),categoryUpdateReqDtp.getTime_book(),categoryUpdateReqDtp.getTime_laptop());
-    }
-
-    public CategoryDetailResDto findCategory(Long student_id, CategoryDetailReqDto categoryDetailReqDto) throws ErrorException {
-        checkStudent(student_id);
-
-        Category category = categoryRepository.findByYearAndMonthAndDay(categoryDetailReqDto.getYear(), categoryDetailReqDto.getMonth(), categoryDetailReqDto.getDay());
-        if (category == null) {
+    public List<CategoryDetailResDto> findCategory(Long student_id, CategoryDetailReqDto categoryDetailReqDto) throws ErrorException {
+        Student student = validateStudent(student_id);
+        List<Category> categoryList = categoryRepository.findByYearAndMonthAndDay(categoryDetailReqDto.getYear(), categoryDetailReqDto.getMonth(), categoryDetailReqDto.getDay(),student);
+        if (categoryList.isEmpty()) {
             throw new ErrorException(String.format("해당 일의 category가 존재하지 않습니다"));
         } else {
-            CategoryDetailResDto categoryDetailResDto = new CategoryDetailResDto(category);
-
-            return categoryDetailResDto;
+            List<CategoryDetailResDto> resDtos = new ArrayList<>();
+            for(Category category : categoryList){
+                resDtos.add(new CategoryDetailResDto(category));
+            }
+            return resDtos;
         }
     }
 
-    public void checkStudent(Long student_id)throws ErrorException{
-        studentRepository.findById(student_id)
+    public List<Proficiencytime> proficiency(Long student_id) throws ErrorException {
+        Student student = validateStudent(student_id);
+        List<Category> categoryList = categoryRepository.findByStudent(student);
+        validateEmpty(categoryList);
+
+        CategoryTimes categoryTimes = createCategoryTimes(categoryList);
+        List<Proficiencytime> convertTimeList = categoryTimes.convertTime();
+        return convertTimeList;
+    }
+
+    private CategoryTimes createCategoryTimes(List<Category> categoryList) {
+        long penTime = 0;
+        long bookTime = 0;
+        long laptopTime = 0;
+
+        for(Category category : categoryList){
+            penTime += category.getPenTime();
+            bookTime += category.getBookTime();
+            laptopTime += category.getLaptopTime();
+        }
+        System.out.println(">>>>> pentime : "+penTime);
+        System.out.println(">>>>> booktime : "+bookTime);
+        System.out.println(">>>>> laptoptime : "+laptopTime);
+
+
+        return new CategoryTimes(penTime, bookTime, laptopTime);
+    }
+
+    private void validateEmpty(List<Category> list) throws ErrorException{
+        if(list.isEmpty()){
+            throw new ErrorException("학생의 카테고리 정보가 존재하지 않습니다");
+        }
+    }
+
+    private Student validateStudent(Long student_id)throws ErrorException{
+        Student student = studentRepository.findById(student_id)
                 .orElseThrow(() -> new ErrorException("잘못된 학생id번호로의 접근입니다"));
+        return student;
     }
 }
