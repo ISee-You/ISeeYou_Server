@@ -22,13 +22,9 @@ public class StudentService {
 
     @Transactional
     public Long save(final StudentSaveRequest saveRequest) {
-        validateDuplicateEmail(saveRequest.getEmail());
         Student student = Student.builder()
                 .name(saveRequest.getName())
-                .email(saveRequest.getEmail())
                 .password(saveRequest.getPassword())
-                .handType(saveRequest.getHandType())
-                .gender(saveRequest.getGenderType())
                 .build();
 
         studentRepository.save(student);
@@ -51,9 +47,9 @@ public class StudentService {
         studentRepository.delete(student);
     }
 
-    public Long find(final Long studentId) {
+    public Student find(final Long studentId) {
         Student findStudent = getStudent(studentId);
-        return findStudent.getId();
+        return findStudent;
     }
 
     public Long login(final StudentLoginRequest loginRequest) {

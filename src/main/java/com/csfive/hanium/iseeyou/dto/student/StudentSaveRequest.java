@@ -10,9 +10,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class StudentSaveRequest {
     private String name;
-    private String email;
     private String password;
-    private HandType handType;
-    private GenderType genderType;
-
 }

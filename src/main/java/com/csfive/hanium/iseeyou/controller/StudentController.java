@@ -1,5 +1,6 @@
 package com.csfive.hanium.iseeyou.controller;
 
+import com.csfive.hanium.iseeyou.domain.student.Student;
 import com.csfive.hanium.iseeyou.dto.student.*;
 import com.csfive.hanium.iseeyou.service.StudentService;
 import com.csfive.hanium.iseeyou.utils.DefaultResponse;
@@ -62,8 +63,8 @@ public class StudentController {
     @GetMapping("/{studentId}")
     public ResponseEntity find(@PathVariable("studentId") final Long studentId) {
         try {
-            Long findStudentId = studentService.find(studentId);
-            return ResponseEntity.ok(DefaultResponse.res(OK, FIND_USER, findStudentId));
+            Student student = studentService.find(studentId);
+            return ResponseEntity.ok(DefaultResponse.res(OK, FIND_USER, student));
         } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.badRequest()
