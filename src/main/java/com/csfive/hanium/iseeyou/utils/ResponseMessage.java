@@ -30,6 +30,7 @@ public class ResponseMessage {
     public static String REGISTER_SUCCESS = "등록 성공";
     public static String REGISTER_FAIL = "등록 실패";
 
+    public static String DELETE_SUCCESS = "삭제 성공";
     public static String DELETE_FAIL = "삭제 실패";
 
     public static String FIND_CATEGORY = "카테고리를 찾았습니다";

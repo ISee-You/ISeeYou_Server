@@ -7,8 +7,6 @@ import com.csfive.hanium.iseeyou.domain.student.Student;
 import com.csfive.hanium.iseeyou.domain.student.StudentRepository;
 import com.csfive.hanium.iseeyou.dto.category.CategoryDetailReqDto;
 import com.csfive.hanium.iseeyou.dto.category.CategoryDetailResDto;
-import com.csfive.hanium.iseeyou.dto.category.CategoryProficiencyResDto;
-import com.csfive.hanium.iseeyou.dto.category.CategoryUpdateReqDtp;
 import com.csfive.hanium.iseeyou.domain.category.Proficiencytime;
 import com.csfive.hanium.iseeyou.utils.ErrorException;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Transactional
 @RequiredArgsConstructor
