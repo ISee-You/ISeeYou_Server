@@ -37,7 +37,7 @@ public class StudentService {
 
     @Transactional
     public void update(final Long studentId, final StudentUpdateRequest updateRequest) {
-        Student student = getStudent(studentId);
+        Student student = findStudentById(studentId);
 
         if(!student.isEqualsOfEmail(updateRequest.getEmail())){
             validateDuplicateEmail(updateRequest.getEmail());
@@ -47,23 +47,23 @@ public class StudentService {
 
     @Transactional
     public void delete(final Long studentId) {
-        Student student = getStudent(studentId);
+        Student student = findStudentById(studentId);
         studentRepository.delete(student);
     }
 
     public Long find(final Long studentId) {
-        Student findStudent = getStudent(studentId);
+        Student findStudent = findStudentById(studentId);
         return findStudent.getId();
     }
 
     public Long login(final StudentLoginRequest loginRequest) {
-        Student findStudent = getStudent(loginRequest);
+        Student findStudent = findStudentByLoginRequest(loginRequest);
         return findStudent.getId();
     }
 
     @Transactional
     public void registerParent(final Long studentId, final Long parentId) {
-        Student student = getStudent(studentId);
+        Student student = findStudentById(studentId);
         Parent parent = parentRepository.getOne(parentId);
 
         student.changeParent(parent);
@@ -71,18 +71,18 @@ public class StudentService {
 
     @Transactional
     public void deleteParent(final Long studentId, final Long parentId) {
-        Student student = getStudent(studentId);
+        Student student = findStudentById(studentId);
         Parent parent = parentRepository.getOne(parentId);
 
         student.removeParent(parent);
     }
 
-    private Student getStudent(final Long studentId) {
+    private Student findStudentById(final Long studentId) {
         return studentRepository.findById(studentId)
-                .orElseThrow(() -> new NoSuchElementException(String.format("id: %d, 존재하지 않는 아이디 입니다.", studentId)));
+                .orElseThrow(() -> new NoSuchElementException(String.format("studentId: %d, 존재하지 않는 아이디 입니다.", studentId)));
     }
 
-    private Student getStudent(final StudentLoginRequest loginRequest) {
+    private Student findStudentByLoginRequest(final StudentLoginRequest loginRequest) {
         return studentRepository.findByEmailAndPassword(loginRequest.getEmail(), loginRequest.getPassword())
                 .orElseThrow(() -> new IllegalArgumentException(String.format("input email: %s, input password: %s 이메일 또는 비밀번호가 다릅니다.",
                         loginRequest.getEmail(), loginRequest.getPassword())));
