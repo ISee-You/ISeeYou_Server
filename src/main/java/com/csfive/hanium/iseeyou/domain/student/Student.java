@@ -1,5 +1,6 @@
 package com.csfive.hanium.iseeyou.domain.student;
 
+import com.csfive.hanium.iseeyou.domain.BaseTimeEntity;
 import com.csfive.hanium.iseeyou.domain.parent.Parent;
 import com.csfive.hanium.iseeyou.enums.GenderType;
 import com.csfive.hanium.iseeyou.enums.HandType;
@@ -10,7 +11,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Student {
+public class Student extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
