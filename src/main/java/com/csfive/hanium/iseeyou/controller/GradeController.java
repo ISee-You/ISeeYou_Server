@@ -10,8 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static com.csfive.hanium.iseeyou.utils.ResponseMessage.SAVE_FAIL;
-import static com.csfive.hanium.iseeyou.utils.ResponseMessage.SAVE_SUCCESS;
+import static com.csfive.hanium.iseeyou.utils.ResponseMessage.*;
 import static com.csfive.hanium.iseeyou.utils.StatusCode.BAD_REQUEST;
 import static com.csfive.hanium.iseeyou.utils.StatusCode.OK;
 
@@ -23,6 +22,20 @@ public class GradeController {
 
     private final GradeService gradeService;
     private final GradeRepository gradeRepository;
+
+    @GetMapping("/{gradeId}")
+    public ResponseEntity findOne(@PathVariable("gradeId") Long gradeId){
+        try {
+            final Long findGradeId = gradeService.findOne(gradeId);
+            GradeDto gradeDto = gradeRepository.findGradeDtoById(findGradeId);
+
+            return ResponseEntity.ok(DefaultResponse.res(OK, FIND_GRADE, gradeDto));
+        }catch (Exception e){
+            log.error(e.getMessage());
+            return ResponseEntity.badRequest()
+                    .body(DefaultResponse.res(BAD_REQUEST, NOT_FOUND_GRADE));
+        }
+    }
 
     @PostMapping("/students/{studentId}")
     public ResponseEntity saveWithStudent(@RequestBody GradeRequest gradeRequest,
