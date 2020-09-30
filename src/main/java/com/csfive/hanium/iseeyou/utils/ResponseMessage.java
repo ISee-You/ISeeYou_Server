@@ -25,11 +25,16 @@ public class ResponseMessage {
     public static String CONTENT_FILE = "파일이 있습니다.";
 
     public static String SAVE_SUCCESS = "저장 성공";
+    public static String SAVE_FAIL = "저장 실패";
     public static String UPDATE_SUCCESS = "업데이트 성공";
+    public static String UPDATE_FAIL = "업데이트 실패";
 
     public static String REGISTER_SUCCESS = "등록 성공";
     public static String REGISTER_FAIL = "등록 실패";
 
     public static String DELETE_FAIL = "삭제 실패";
     public static String DELETE_SUCCESS = "삭제 성공";
+
+    public static String FIND_ATTITUDE = "자세 조회 성공";
+    public static String NOT_FOUND_ATTITUDE = "자세 조회 실패";
 }
