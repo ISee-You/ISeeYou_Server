@@ -23,7 +23,7 @@ public class Poses {
     @OneToMany(mappedBy = "attitude", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Pose> poses;
 
-    public Poses(final List<Pose> poses) {
+    private Poses(final List<Pose> poses) {
         validateCorrectCount(poses.size());
         this.poses = poses;
     }
