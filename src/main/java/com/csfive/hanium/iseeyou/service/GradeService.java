@@ -57,4 +57,8 @@ public class GradeService {
         return studentRepository.findById(studentId)
                 .orElseThrow(() -> new NoSuchElementException(String.format("studentId: %d, 존재하지 않는 아이디 입니다.", studentId)));
     }
+
+    public List<Grade> findAll() {
+        return gradeRepository.findAll();
+    }
 }

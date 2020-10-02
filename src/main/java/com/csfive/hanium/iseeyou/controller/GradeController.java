@@ -41,6 +41,22 @@ public class GradeController {
         }
     }
 
+    @GetMapping
+    public ResponseEntity findAll() {
+        try {
+            final List<Grade> grades = gradeService.findAll();
+            List<GradeDto> gradeDtos = grades.stream()
+                    .map(GradeDto::new)
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.ok(DefaultResponse.res(OK, FIND_GRADE, gradeDtos));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.badRequest()
+                    .body(DefaultResponse.res(BAD_REQUEST, NOT_FOUND_GRADE));
+        }
+    }
+
     @GetMapping("/students/{studentId}")
     public ResponseEntity findAllByStudent(@PathVariable("studentId") Long studentId) {
         try {
