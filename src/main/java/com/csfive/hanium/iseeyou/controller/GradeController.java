@@ -1,5 +1,6 @@
 package com.csfive.hanium.iseeyou.controller;
 
+import com.csfive.hanium.iseeyou.domain.grade.Grade;
 import com.csfive.hanium.iseeyou.domain.grade.GradeRepository;
 import com.csfive.hanium.iseeyou.dto.grade.GradeDto;
 import com.csfive.hanium.iseeyou.dto.grade.GradeRequest;
@@ -9,6 +10,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.csfive.hanium.iseeyou.utils.ResponseMessage.*;
 import static com.csfive.hanium.iseeyou.utils.StatusCode.BAD_REQUEST;
@@ -24,13 +28,29 @@ public class GradeController {
     private final GradeRepository gradeRepository;
 
     @GetMapping("/{gradeId}")
-    public ResponseEntity findOne(@PathVariable("gradeId") Long gradeId){
+    public ResponseEntity findOne(@PathVariable("gradeId") Long gradeId) {
         try {
             final Long findGradeId = gradeService.findOne(gradeId);
             GradeDto gradeDto = gradeRepository.findGradeDtoById(findGradeId);
 
             return ResponseEntity.ok(DefaultResponse.res(OK, FIND_GRADE, gradeDto));
-        }catch (Exception e){
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.badRequest()
+                    .body(DefaultResponse.res(BAD_REQUEST, NOT_FOUND_GRADE));
+        }
+    }
+
+    @GetMapping("/students/{studentId}")
+    public ResponseEntity findAllByStudent(@PathVariable("studentId") Long studentId) {
+        try {
+            final List<Grade> grades = gradeService.findAllByStudent(studentId);
+            List<GradeDto> gradeDtos = grades.stream()
+                    .map(GradeDto::new)
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.ok(DefaultResponse.res(OK, FIND_GRADE, gradeDtos));
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.badRequest()
                     .body(DefaultResponse.res(BAD_REQUEST, NOT_FOUND_GRADE));
@@ -39,13 +59,13 @@ public class GradeController {
 
     @PostMapping("/students/{studentId}")
     public ResponseEntity saveWithStudent(@RequestBody GradeRequest gradeRequest,
-                                          @PathVariable("studentId") Long studentId){
+                                          @PathVariable("studentId") Long studentId) {
         try {
             Long gradeId = gradeService.saveWithStudent(gradeRequest, studentId);
             GradeDto gradeDto = gradeRepository.findGradeDtoById(gradeId);
 
             return ResponseEntity.ok(DefaultResponse.res(OK, SAVE_SUCCESS, gradeDto));
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.badRequest()
                     .body(DefaultResponse.res(BAD_REQUEST, SAVE_FAIL));

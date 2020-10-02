@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -40,6 +41,11 @@ public class GradeService {
     public Long findOne(final Long gradeId) {
         Grade findGrade = findGradeById(gradeId);
         return findGrade.getId();
+    }
+
+    public List<Grade> findAllByStudent(final Long studentId) {
+        Student student = findStudentById(studentId);
+        return gradeRepository.findAllByStudent(student);
     }
 
     private Grade findGradeById(final Long gradeId) {
