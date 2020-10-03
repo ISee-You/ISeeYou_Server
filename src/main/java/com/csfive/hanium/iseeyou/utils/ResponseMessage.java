@@ -40,4 +40,6 @@ public class ResponseMessage {
 
     public static String FIND_GRADE = "성적 조회 성공";
     public static String NOT_FOUND_GRADE = "성적 조회 실패";
+    public static String UPDATE_GRADE_SUCCESS = "성적 수정 성공";
+    public static String UPDATE_GRADE_FAIL = "성적 수정 실패";
 }

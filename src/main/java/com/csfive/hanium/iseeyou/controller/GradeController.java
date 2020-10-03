@@ -87,4 +87,19 @@ public class GradeController {
                     .body(DefaultResponse.res(BAD_REQUEST, SAVE_FAIL));
         }
     }
+
+    @PutMapping("/{gradeId}")
+    public ResponseEntity update(@PathVariable("gradeId") Long gradeId,
+                                 @RequestBody GradeRequest gradeRequest) {
+        try {
+            gradeService.update(gradeId, gradeRequest);
+            final GradeDto gradeDto = gradeRepository.findGradeDtoById(gradeId);
+
+            return ResponseEntity.ok(DefaultResponse.res(OK, UPDATE_GRADE_SUCCESS, gradeDto));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.badRequest()
+                    .body(DefaultResponse.res(BAD_REQUEST, UPDATE_GRADE_FAIL));
+        }
+    }
 }

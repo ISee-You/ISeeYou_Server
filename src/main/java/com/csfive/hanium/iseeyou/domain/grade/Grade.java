@@ -34,6 +34,16 @@ public class Grade extends BaseTimeEntity {
     private double society;
     private double science;
 
+    public void update(final LocalDate examDate, final double korean, final double english,
+                       final double math, final double society, final double science) {
+        this.examDate = examDate;
+        this.korean = korean;
+        this.english = english;
+        this.math = math;
+        this.society = society;
+        this.science = science;
+    }
+
     @Builder
     public Grade(final Student student, final LocalDate examDate,
                  final double korean, final double english, final double math, final double society, final double science) {
