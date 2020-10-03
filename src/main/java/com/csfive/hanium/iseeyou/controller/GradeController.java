@@ -102,4 +102,27 @@ public class GradeController {
                     .body(DefaultResponse.res(BAD_REQUEST, UPDATE_GRADE_FAIL));
         }
     }
+
+    @DeleteMapping("/{gradeId}")
+    public ResponseEntity deleteOne(@PathVariable("gradeId") Long gradeId){
+        try {
+            gradeService.delete(gradeId);
+            return ResponseEntity.ok(DefaultResponse.res(OK, DELETE_GRADE_SUCCESS));
+        }catch (Exception e){
+            log.error(e.getMessage());
+            return ResponseEntity.badRequest()
+                    .body(DefaultResponse.res(BAD_REQUEST, DELETE_GRADE_FAIL));
+        }
+    }
+
+    @DeleteMapping("students/{studentId}")
+    public ResponseEntity deleteAllByStudent(@PathVariable("studentId") Long studentId){
+        try {
+            gradeService.deleteAllByStudent(studentId);
+            return ResponseEntity.ok(DefaultResponse.res(OK, DELETE_SUCCESS));
+        }catch (Exception e){
+            return ResponseEntity.badRequest()
+                    .body(DefaultResponse.res(BAD_REQUEST, DELETE_GRADE_FAIL));
+        }
+    }
 }
