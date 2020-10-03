@@ -37,4 +37,7 @@ public class ResponseMessage {
 
     public static String FIND_ATTITUDE = "자세 조회 성공";
     public static String NOT_FOUND_ATTITUDE = "자세 조회 실패";
+
+    public static String FIND_GRADE = "성적 조회 성공";
+    public static String NOT_FOUND_GRADE = "성적 조회 실패";
 }

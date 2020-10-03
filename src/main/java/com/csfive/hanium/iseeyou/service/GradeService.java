@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -37,8 +38,27 @@ public class GradeService {
         return grade.getId();
     }
 
+    public Long findOne(final Long gradeId) {
+        Grade findGrade = findGradeById(gradeId);
+        return findGrade.getId();
+    }
+
+    public List<Grade> findAllByStudent(final Long studentId) {
+        Student student = findStudentById(studentId);
+        return gradeRepository.findAllByStudent(student);
+    }
+
+    private Grade findGradeById(final Long gradeId) {
+        return gradeRepository.findById(gradeId)
+                .orElseThrow(() -> new NoSuchElementException(String.format("gradeId: %d, 존재하지 않는 아이디 입니다.", gradeId)));
+    }
+
     private Student findStudentById(final Long studentId) {
         return studentRepository.findById(studentId)
                 .orElseThrow(() -> new NoSuchElementException(String.format("studentId: %d, 존재하지 않는 아이디 입니다.", studentId)));
+    }
+
+    public List<Grade> findAll() {
+        return gradeRepository.findAll();
     }
 }
