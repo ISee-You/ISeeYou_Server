@@ -43,9 +43,33 @@ public class GradeService {
         return findGrade.getId();
     }
 
+    @Transactional
     public List<Grade> findAllByStudent(final Long studentId) {
         Student student = findStudentById(studentId);
         return gradeRepository.findAllByStudent(student);
+    }
+
+    public List<Grade> findAll() {
+        return gradeRepository.findAll();
+    }
+
+    @Transactional
+    public void update(final Long gradeId, final GradeRequest gradeRequest) {
+        final Grade grade = findGradeById(gradeId);
+        grade.update(gradeRequest.getExamDate(), gradeRequest.getKorean(), gradeRequest.getEnglish(),
+                gradeRequest.getMath(), gradeRequest.getSociety(), gradeRequest.getScience());
+    }
+
+    @Transactional
+    public void delete(final Long gradeId) {
+        Grade grade = findGradeById(gradeId);
+        gradeRepository.delete(grade);
+    }
+
+    @Transactional
+    public void deleteAllByStudent(final Long studentId) {
+        final Student student = findStudentById(studentId);
+        gradeRepository.deleteAllByStudent(student);
     }
 
     private Grade findGradeById(final Long gradeId) {
@@ -56,9 +80,5 @@ public class GradeService {
     private Student findStudentById(final Long studentId) {
         return studentRepository.findById(studentId)
                 .orElseThrow(() -> new NoSuchElementException(String.format("studentId: %d, 존재하지 않는 아이디 입니다.", studentId)));
-    }
-
-    public List<Grade> findAll() {
-        return gradeRepository.findAll();
     }
 }

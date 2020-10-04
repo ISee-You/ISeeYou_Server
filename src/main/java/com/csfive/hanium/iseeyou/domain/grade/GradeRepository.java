@@ -18,4 +18,6 @@ public interface GradeRepository extends JpaRepository<Grade, Long> {
             "where g.student = :student " +
             "order by g.examDate asc")
     List<Grade> findAllByStudent(@Param("student") Student student);
+
+    void deleteAllByStudent(Student student);
 }
