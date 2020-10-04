@@ -7,15 +7,20 @@ import com.csfive.hanium.iseeyou.domain.student.Student;
 import com.csfive.hanium.iseeyou.domain.student.StudentRepository;
 import com.csfive.hanium.iseeyou.dto.category.CategoryDetailReqDto;
 import com.csfive.hanium.iseeyou.dto.category.CategoryDetailResDto;
-import com.csfive.hanium.iseeyou.domain.category.Proficiencytime;
+import com.csfive.hanium.iseeyou.domain.category.ProficiencyTime;
 import com.csfive.hanium.iseeyou.utils.ErrorException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Transactional
 @RequiredArgsConstructor
 @Service
@@ -25,7 +30,19 @@ public class CategoryService {
     private final StudentRepository studentRepository;
 
     public List<CategoryDetailResDto> findCategory(Long student_id, CategoryDetailReqDto categoryDetailReqDto) throws ErrorException {
-        Student student = validateStudent(student_id);
+        LocalDate date = LocalDate.now();
+        LocalTime time = LocalTime.now();
+        LocalDateTime localDateTime = LocalDateTime.now();
+
+        log.info(">>>testLocalDate : "+date);
+        log.info(">>>testgetDayofYear : "+date.getDayOfYear());
+        log.info(">>>testgetDayofMomth : "+date.getDayOfMonth());
+        log.info(">>>testgetDayofWeek : "+date.getDayOfWeek());
+        log.info(">>>testgetMonth : "+date.getMonth());
+        log.info(">>>testLocalTime : "+time);
+        log.info(">>>testLocalDateTime : "+localDateTime);
+
+        Student student = findStudent(student_id);
         List<Category> categoryList = categoryRepository.findByYearAndMonthAndDay(categoryDetailReqDto.getYear(), categoryDetailReqDto.getMonth(), categoryDetailReqDto.getDay(),student);
         if (categoryList.isEmpty()) {
             throw new ErrorException(String.format("해당 일의 category가 존재하지 않습니다"));
@@ -35,16 +52,20 @@ public class CategoryService {
                 resDtos.add(new CategoryDetailResDto(category));
             }
             return resDtos;
+
+//            List categoryDetailResDtos = categoryList.stream()
+//                    .map(CategoryDetailResDto::new)
+//                    .collect(Collectors.toList());
         }
     }
 
-    public List<Proficiencytime> proficiency(Long student_id) throws ErrorException {
-        Student student = validateStudent(student_id);
+    public List<ProficiencyTime> categoryProficiency(Long student_id) throws ErrorException {
+        Student student = findStudent(student_id);
         List<Category> categoryList = categoryRepository.findByStudent(student);
         validateEmpty(categoryList);
 
         CategoryTimes categoryTimes = createCategoryTimes(categoryList);
-        List<Proficiencytime> convertTimeList = categoryTimes.convertTime();
+        List<ProficiencyTime> convertTimeList = categoryTimes.convertTime();
         return convertTimeList;
     }
 
@@ -58,10 +79,9 @@ public class CategoryService {
             bookTime += category.getBookTime();
             laptopTime += category.getLaptopTime();
         }
-        System.out.println(">>>>> pentime : "+penTime);
-        System.out.println(">>>>> booktime : "+bookTime);
-        System.out.println(">>>>> laptoptime : "+laptopTime);
-
+        log.info(">>>>> pentime : {}",penTime);
+        log.info(">>>>> booktime : {}",bookTime);
+        log.info(">>>>> laptoptime : {}",laptopTime);
 
         return new CategoryTimes(penTime, bookTime, laptopTime);
     }
@@ -72,7 +92,7 @@ public class CategoryService {
         }
     }
 
-    private Student validateStudent(Long student_id)throws ErrorException{
+    private Student findStudent(Long student_id)throws ErrorException{
         Student student = studentRepository.findById(student_id)
                 .orElseThrow(() -> new ErrorException("잘못된 학생id번호로의 접근입니다"));
         return student;

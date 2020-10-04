@@ -12,34 +12,20 @@ public class CategoryTimes {
     private final long bookTime;
     private final long laptopTime;
 
-    List<Proficiencytime> proficiencytimeList = new ArrayList<>();
+    List<ProficiencyTime> proficiencyTimeList = new ArrayList<>();
 
-    private void convertPenTime(long penTime){
-        Proficiencytime proficiencytime = new Proficiencytime();
-        proficiencytime.setCategoryname("penTime");
-        proficiencytime.setProficiency(penTime);
-        proficiencytimeList.add(proficiencytime);
+    private void RefiningtTime(long categoryTime, String settingCategoryName){
+        ProficiencyTime proficiencyTime = new ProficiencyTime();
+        proficiencyTime.setCategoryname(settingCategoryName);
+        proficiencyTime.setProficiency(categoryTime);
+        proficiencyTimeList.add(proficiencyTime);
     }
 
-    private void convertBookTime(long bookTime){
-        Proficiencytime proficiencytime = new Proficiencytime();
-        proficiencytime.setCategoryname("bookTime");
-        proficiencytime.setProficiency(bookTime);
-        proficiencytimeList.add(proficiencytime);
-    }
+    public List<ProficiencyTime> convertTime() {
+        RefiningtTime(this.penTime,"penTime");
+        RefiningtTime(this.bookTime,"bookTime");
+        RefiningtTime(this.laptopTime,"laptopTime");
 
-    private void convertLaptopTime(long laptopTime){
-        Proficiencytime proficiencytime = new Proficiencytime();
-        proficiencytime.setCategoryname("laptopTime");
-        proficiencytime.setProficiency(laptopTime);
-        proficiencytimeList.add(proficiencytime);
-    }
-
-    public List<Proficiencytime> convertTime() {
-        convertPenTime(this.penTime);
-        convertBookTime(this.bookTime);
-        convertLaptopTime(this.laptopTime);
-
-        return this.proficiencytimeList;
+        return this.proficiencyTimeList;
     }
 }

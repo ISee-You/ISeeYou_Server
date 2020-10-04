@@ -11,11 +11,4 @@ public class CategoryDetailReqDto {
     private int year;
     private int month;
     private int day;
-
-
-//    public CategoryDetailResDto(Category category){
-//        this.year = category.getYear();
-//        this.month = month;
-//        this.day = day;
-//    }
 }

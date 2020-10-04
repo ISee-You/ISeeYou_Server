@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Proficiencytime {
+public class ProficiencyTime {
     private String categoryname;
     private long hour;
     private long min;

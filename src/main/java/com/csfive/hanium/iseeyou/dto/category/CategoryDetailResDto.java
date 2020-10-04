@@ -14,7 +14,6 @@ public class CategoryDetailResDto {
     private int pentime;
     private int laptoptime;
     private Long student_id;
-    private String student_email;
 
 
     public CategoryDetailResDto(Category category){
@@ -25,6 +24,5 @@ public class CategoryDetailResDto {
         this.pentime = category.getPenTime();
         this.laptoptime = category.getLaptopTime();
         this.student_id = category.getStudent().getId();
-        this.student_email = category.getStudent().getEmail();
     }
 }

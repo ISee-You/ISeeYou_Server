@@ -1,6 +1,6 @@
 package com.csfive.hanium.iseeyou.controller;
 
-import com.csfive.hanium.iseeyou.domain.category.Proficiencytime;
+import com.csfive.hanium.iseeyou.domain.category.ProficiencyTime;
 import com.csfive.hanium.iseeyou.dto.category.CategoryDetailReqDto;
 import com.csfive.hanium.iseeyou.dto.category.CategoryDetailResDto;
 import com.csfive.hanium.iseeyou.service.CategoryService;
@@ -35,7 +35,7 @@ public class CategoryController {
     @GetMapping("/{student_id}/category")
     public ResponseEntity proficiencyCategory(@PathVariable("student_id")Long id){
         try{
-            List<Proficiencytime> categoryProficiencyResDtoList= categoryService.proficiency(id);
+            List<ProficiencyTime> categoryProficiencyResDtoList= categoryService.categoryProficiency(id);
             return ResponseEntity.ok(DefaultResponse.res(OK,FIND_CATEGORY,categoryProficiencyResDtoList));
         }catch (ErrorException e){
             return ResponseEntity.status(e.getERR_CODE()).body(DefaultResponse.res(e.getERR_CODE(),e.getMessage()));
