@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
-public interface AttitudeRepository extends JpaRepository<Attitude, Long> {
+public interface AttitudeRepository extends JpaRepository<Attitude, Long>, AttitudeRepositoryCustom {
 
     @Query("select a from Attitude a " +
             "join fetch a.poses.poses " +
