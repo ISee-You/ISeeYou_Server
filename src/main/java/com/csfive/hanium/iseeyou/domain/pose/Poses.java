@@ -60,6 +60,21 @@ public class Poses {
         poses.forEach(p -> p.changeAttitude(attitude));
     }
 
+    public void plusCountTo(final List<Integer> poseCounts) {
+        int idx = 0;
+        for (Pose pose : poses) {
+            plusCountTo(poseCounts, idx++, pose.getCount());
+        }
+    }
+
+    private void plusCountTo(final List<Integer> poseCounts, int idx, int count) {
+        if (poseCounts.size() != VALID_COUNT_SIZE) {
+            poseCounts.add(count);
+            return;
+        }
+        poseCounts.set(idx, poseCounts.get(idx) + count);
+    }
+
     private static void validateCorrectCount(final int size) {
         if (size != VALID_COUNT_SIZE) {
             throw new IllegalArgumentException(String.format("poses size : %d, 올바른 poses size는 %d입니다.", size, VALID_COUNT_SIZE));

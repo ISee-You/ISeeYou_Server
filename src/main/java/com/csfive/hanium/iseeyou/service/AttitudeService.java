@@ -7,16 +7,27 @@ import com.csfive.hanium.iseeyou.domain.pose.PoseRepository;
 import com.csfive.hanium.iseeyou.domain.pose.Poses;
 import com.csfive.hanium.iseeyou.domain.student.Student;
 import com.csfive.hanium.iseeyou.domain.student.StudentRepository;
-import com.csfive.hanium.iseeyou.dto.attitude.AttitudeResult;
+import com.csfive.hanium.iseeyou.dto.attitude.AttitudeResultRequest;
+import com.csfive.hanium.iseeyou.dto.pose.PoseResults;
+import com.csfive.hanium.iseeyou.dto.pose.PosesTimeRequest;
+import com.csfive.hanium.iseeyou.enums.DateStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class AttitudeService {
+
+    private static final int PICTURE_GAP = 3;
 
     private final AttitudeRepository attitudeRepository;
     private final StudentRepository studentRepository;
@@ -36,14 +47,14 @@ public class AttitudeService {
     }
 
     @Transactional
-    public Long saveWithStudentAndPoses(final Long studentId, final AttitudeResult attitudeResult) {
-        checkPositiveNumber(attitudeResult.getTotalSecond());
+    public Long saveWithStudentAndPoses(final Long studentId, final AttitudeResultRequest attitudeResultRequest) {
+        checkPositiveNumber(attitudeResultRequest.getTotalSecond());
 
         Student student = findStudentById(studentId);
         Attitude attitude = Attitude.builder()
                 .student(student)
-                .totalSecond(attitudeResult.getTotalSecond())
-                .poses(Poses.createPoses(attitudeResult.getCounts()))
+                .totalSecond(attitudeResultRequest.getTotalSecond())
+                .poses(Poses.createPoses(attitudeResultRequest.getCounts()))
                 .build();
 
         attitudeRepository.save(attitude);
@@ -65,6 +76,56 @@ public class AttitudeService {
         final Pose pose = findPoseById(poseId);
 
         attitude.plusCountOfPose(pose);
+    }
+
+    @Transactional
+    public PoseResults findPoseResultsByStudentAndDate(final Long studentId, final PosesTimeRequest posesTimeRequest) {
+        final Student student = findStudentById(studentId);
+
+        final DateStatus dateStatus = DateStatus.findByType(posesTimeRequest.getDateType());
+        final LocalDateTime endDate = getEndDate(posesTimeRequest.getStartDate(), dateStatus.days);
+        final LocalDateTime startDate = convertLocalDateTime(posesTimeRequest.getStartDate());
+
+        final List<Attitude> attitudes = attitudeRepository.findAllByStudentAndBetweenLocalDateTime(student, startDate, endDate);
+
+        return createPoseResults(attitudes);
+    }
+
+    private LocalDateTime getEndDate(final LocalDate startDate, final int days) {
+        if (days == 0) {
+            return LocalDateTime.of(LocalDate.MIN, LocalTime.MAX);
+        }
+        return LocalDateTime.of(startDate.plusDays(days), LocalTime.MAX);
+    }
+
+    private LocalDateTime convertLocalDateTime(final LocalDate startDate) {
+        return startDate.atStartOfDay();
+    }
+
+    private PoseResults createPoseResults(final List<Attitude> attitudes) {
+        List<Integer> poseCounts = new ArrayList<>();
+        changePoseCounts(attitudes, poseCounts);
+
+        int totalCount = getTotalCount(poseCounts);
+        List<Double> percentages = createPercentages(poseCounts, totalCount);
+
+        return new PoseResults(percentages, totalCount * PICTURE_GAP);
+    }
+
+    private void changePoseCounts(final List<Attitude> attitudes, final List<Integer> poseCounts) {
+        attitudes.forEach(attitude -> attitude.plusCountTo(poseCounts));
+    }
+
+    private int getTotalCount(final List<Integer> poseCounts) {
+        return poseCounts.stream()
+                .mapToInt(poseCount -> poseCount)
+                .sum();
+    }
+
+    private List<Double> createPercentages(final List<Integer> poseCounts, final double totalCount) {
+        return poseCounts.stream()
+                .map(poseCount -> (Math.floor(poseCount / totalCount * 100)))
+                .collect(Collectors.toList());
     }
 
     private Attitude findAttitudeByEntity(final Attitude attitude) {

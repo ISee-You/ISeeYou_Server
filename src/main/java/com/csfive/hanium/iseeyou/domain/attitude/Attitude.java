@@ -8,6 +8,8 @@ import lombok.*;
 
 import javax.persistence.*;
 
+import java.util.List;
+
 import static javax.persistence.FetchType.LAZY;
 
 @Entity
@@ -41,5 +43,9 @@ public class Attitude extends BaseTimeEntity {
         this.totalSecond = totalSecond;
 
         poses.changeAttitude(this);
+    }
+
+    public void plusCountTo(final List<Integer> poseCounts) {
+        poses.plusCountTo(poseCounts);
     }
 }
